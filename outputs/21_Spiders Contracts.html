@@ -1,0 +1,125 @@
+<div class="section" id="spiders-contracts">
+<span id="topics-contracts"></span><h1>Spiders Contracts<a class="headerlink" href="#spiders-contracts" title="永久链接至标题">¶</a></h1>
+<div class="versionadded">
+<p><span class="versionmodified">0.15 新版功能.</span></p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">这是一个新引入(Scrapy 0.15)的特性，在后续的功能/API更新中可能有所改变，查看
+<a class="reference internal" href="../news.html#news"><span class="std std-ref">release notes</span></a> 来了解更新。</p>
+</div>
+<p>测试spider是一件挺烦人的事情，尤其是只能编写单元测试(unit test)没有其他办法时，就更恼人了。
+Scrapy通过合同(contract)的方式来提供了测试spider的集成方法。</p>
+<p>您可以硬编码(hardcode)一个样例(sample)url，
+设置多个条件来测试回调函数处理repsponse的结果，来测试spider的回调函数。
+每个contract包含在文档字符串(docstring)里，以 <code class="docutils literal"><span class="pre">@</span></code> 开头。
+查看下面的例子:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+    <span class="sd">""" This function parses a sample response. Some contracts are mingled</span>
+<span class="sd">    with this docstring.</span>
+
+<span class="sd">    @url http://www.amazon.com/s?field-keywords=selfish+gene</span>
+<span class="sd">    @returns items 1 16</span>
+<span class="sd">    @returns requests 0 0</span>
+<span class="sd">    @scrapes Title Author Year Price</span>
+<span class="sd">    """</span>
+</pre></div>
+</div>
+<p>该回调函数使用了三个内置的contract来测试:</p>
+<span class="target" id="module-scrapy.contracts.default"></span><dl class="class">
+<dt id="scrapy.contracts.default.UrlContract">
+<em class="property">class </em><code class="descclassname">scrapy.contracts.default.</code><code class="descname">UrlContract</code><a class="headerlink" href="#scrapy.contracts.default.UrlContract" title="永久链接至目标">¶</a></dt>
+<dd><p>该constract(<code class="docutils literal"><span class="pre">@url</span></code>)设置了用于检查spider的其他constract状态的样例url。
+该contract是必须的，所有缺失该contract的回调函数在测试时将会被忽略:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nd">@url</span> <span class="n">url</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="scrapy.contracts.default.ReturnsContract">
+<em class="property">class </em><code class="descclassname">scrapy.contracts.default.</code><code class="descname">ReturnsContract</code><a class="headerlink" href="#scrapy.contracts.default.ReturnsContract" title="永久链接至目标">¶</a></dt>
+<dd><p>该contract(<code class="docutils literal"><span class="pre">@returns</span></code>)设置spider返回的items和requests的上界和下界。
+上界是可选的:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nd">@returns</span> <span class="n">item</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">|</span><span class="n">request</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="p">[</span><span class="nb">min</span> <span class="p">[</span><span class="nb">max</span><span class="p">]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="scrapy.contracts.default.ScrapesContract">
+<em class="property">class </em><code class="descclassname">scrapy.contracts.default.</code><code class="descname">ScrapesContract</code><a class="headerlink" href="#scrapy.contracts.default.ScrapesContract" title="永久链接至目标">¶</a></dt>
+<dd><p>该contract(<code class="docutils literal"><span class="pre">@scrapes</span></code>)检查回调函数返回的所有item是否有特定的fields:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nd">@scrapes</span> <span class="n">field_1</span> <span class="n">field_2</span> <span class="o">...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<p>使用 <a class="reference internal" href="commands.html#std:command-check"><code class="xref std std-command docutils literal"><span class="pre">check</span></code></a> 命令来运行contract检查。</p>
+<div class="section" id="contracts">
+<h2>自定义Contracts<a class="headerlink" href="#contracts" title="永久链接至标题">¶</a></h2>
+<p>如果您想要比内置scrapy contract更为强大的功能，可以在您的项目里创建并设置您自己的
+contract，并使用 <a class="reference internal" href="settings.html#std:setting-SPIDER_CONTRACTS"><code class="xref std std-setting docutils literal"><span class="pre">SPIDER_CONTRACTS</span></code></a> 设置来加载:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">SPIDER_CONTRACTS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'myproject.contracts.ResponseCheck'</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s1">'myproject.contracts.ItemValidate'</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>每个contract必须继承 <a class="reference internal" href="#scrapy.contracts.Contract" title="scrapy.contracts.Contract"><code class="xref py py-class docutils literal"><span class="pre">scrapy.contracts.Contract</span></code></a> 并覆盖下列三个方法:</p>
+<span class="target" id="module-scrapy.contracts"></span><dl class="class">
+<dt id="scrapy.contracts.Contract">
+<em class="property">class </em><code class="descclassname">scrapy.contracts.</code><code class="descname">Contract</code><span class="sig-paren">(</span><em>method</em>, <em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.contracts.Contract" title="永久链接至目标">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name">
+<col class="field-body">
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first last simple">
+<li><strong>method</strong> (<em>function</em>) – contract所关联的回调函数</li>
+<li><strong>args</strong> (<em>list</em>) – 传入docstring的(以空格区分的)argument列表(list)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="scrapy.contracts.Contract.adjust_request_args">
+<code class="descname">adjust_request_args</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.contracts.Contract.adjust_request_args" title="永久链接至目标">¶</a></dt>
+<dd><p>接收一个 <code class="docutils literal"><span class="pre">字典(dict)</span></code> 作为参数。该参数包含了所有 <a class="reference internal" href="request-response.html#scrapy.http.Request" title="scrapy.http.Request"><code class="xref py py-class docutils literal"><span class="pre">Request</span></code></a> 对象
+参数的默认值。该方法必须返回相同或修改过的字典。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.contracts.Contract.pre_process">
+<code class="descname">pre_process</code><span class="sig-paren">(</span><em>response</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.contracts.Contract.pre_process" title="永久链接至目标">¶</a></dt>
+<dd><p>该函数在sample request接收到response后，传送给回调函数前被调用，运行测试。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.contracts.Contract.post_process">
+<code class="descname">post_process</code><span class="sig-paren">(</span><em>output</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.contracts.Contract.post_process" title="永久链接至目标">¶</a></dt>
+<dd><p>该函数处理回调函数的输出。迭代器(Iterators)在传输给该函数前会被列表化(listified)。</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>该样例contract在response接收时检查了是否有自定义header。
+在失败时Raise <code class="xref py py-class docutils literal"><span class="pre">scrapy.exceptions.ContractFaild</span></code> 来展现错误:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy.contracts</span> <span class="k">import</span> <span class="n">Contract</span>
+<span class="kn">from</span> <span class="nn">scrapy.exceptions</span> <span class="k">import</span> <span class="n">ContractFail</span>
+
+<span class="k">class</span> <span class="nc">HasHeaderContract</span><span class="p">(</span><span class="n">Contract</span><span class="p">):</span>
+    <span class="sd">""" Demo contract which checks the presence of a custom header</span>
+<span class="sd">        @has_header X-CustomHeader</span>
+<span class="sd">    """</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">'has_header'</span>
+
+    <span class="k">def</span> <span class="nf">pre_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">header</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">header</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">ContractFail</span><span class="p">(</span><span class="s1">'X-CustomHeader not present'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>

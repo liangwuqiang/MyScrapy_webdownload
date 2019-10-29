@@ -1,0 +1,270 @@
+<div class="section" id="spider-middleware">
+<span id="topics-spider-middleware"></span><h1>Spider中间件(Middleware)<a class="headerlink" href="#spider-middleware" title="永久链接至标题">¶</a></h1>
+<p>Spider中间件是介入到Scrapy的spider处理机制的钩子框架，您可以添加代码来处理发送给
+<a class="reference internal" href="spiders.html#topics-spiders"><span class="std std-ref">Spiders</span></a> 的response及spider产生的item和request。</p>
+<div class="section" id="spider">
+<span id="topics-spider-middleware-setting"></span><h2>激活spider中间件<a class="headerlink" href="#spider" title="永久链接至标题">¶</a></h2>
+<p>要启用spider中间件，您可以将其加入到
+<a class="reference internal" href="settings.html#std:setting-SPIDER_MIDDLEWARES"><code class="xref std std-setting docutils literal"><span class="pre">SPIDER_MIDDLEWARES</span></code></a> 设置中。
+该设置是一个字典，键位中间件的路径，值为中间件的顺序(order)。</p>
+<p>样例:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">SPIDER_MIDDLEWARES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'myproject.middlewares.CustomSpiderMiddleware'</span><span class="p">:</span> <span class="mi">543</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="settings.html#std:setting-SPIDER_MIDDLEWARES"><code class="xref std std-setting docutils literal"><span class="pre">SPIDER_MIDDLEWARES</span></code></a> 设置会与Scrapy定义的
+<a class="reference internal" href="settings.html#std:setting-SPIDER_MIDDLEWARES_BASE"><code class="xref std std-setting docutils literal"><span class="pre">SPIDER_MIDDLEWARES_BASE</span></code></a> 设置合并(但不是覆盖)，
+而后根据顺序(order)进行排序，最后得到启用中间件的有序列表:
+第一个中间件是最靠近引擎的，最后一个中间件是最靠近spider的。</p>
+<p>关于如何分配中间件的顺序请查看
+<a class="reference internal" href="settings.html#std:setting-SPIDER_MIDDLEWARES_BASE"><code class="xref std std-setting docutils literal"><span class="pre">SPIDER_MIDDLEWARES_BASE</span></code></a> 设置，而后根据您想要放置中间件的位置选择一个值。
+由于每个中间件执行不同的动作，您的中间件可能会依赖于之前(或者之后)执行的中间件，因此顺序是很重要的。</p>
+<p>如果您想禁止内置的(在
+<a class="reference internal" href="settings.html#std:setting-SPIDER_MIDDLEWARES_BASE"><code class="xref std std-setting docutils literal"><span class="pre">SPIDER_MIDDLEWARES_BASE</span></code></a> 中设置并默认启用的)中间件，
+您必须在项目的 <a class="reference internal" href="settings.html#std:setting-SPIDER_MIDDLEWARES"><code class="xref std std-setting docutils literal"><span class="pre">SPIDER_MIDDLEWARES</span></code></a> 设置中定义该中间件，并将其值赋为 <cite>None</cite> 。
+例如，如果您想要关闭off-site中间件:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">SPIDER_MIDDLEWARES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'myproject.middlewares.CustomSpiderMiddleware'</span><span class="p">:</span> <span class="mi">543</span><span class="p">,</span>
+    <span class="s1">'scrapy.contrib.spidermiddleware.offsite.OffsiteMiddleware'</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>最后，请注意，有些中间件需要通过特定的设置来启用。更多内容请查看相关中间件文档。</p>
+</div>
+<div class="section" id="id1">
+<h2>编写您自己的spider中间件<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>编写spider中间件十分简单。每个中间件组件是一个定义了以下一个或多个方法的Python类:</p>
+<span class="target" id="module-scrapy.contrib.spidermiddleware"></span><dl class="class">
+<dt id="scrapy.contrib.spidermiddleware.SpiderMiddleware">
+<em class="property">class </em><code class="descclassname">scrapy.contrib.spidermiddleware.</code><code class="descname">SpiderMiddleware</code><a class="headerlink" href="#scrapy.contrib.spidermiddleware.SpiderMiddleware" title="永久链接至目标">¶</a></dt>
+<dd><dl class="method">
+<dt id="scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_input">
+<code class="descname">process_spider_input</code><span class="sig-paren">(</span><em>response</em>, <em>spider</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_input" title="永久链接至目标">¶</a></dt>
+<dd><p>当response通过spider中间件时，该方法被调用，处理该response。</p>
+<p><a class="reference internal" href="#scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_input" title="scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_input"><code class="xref py py-meth docutils literal"><span class="pre">process_spider_input()</span></code></a> 应该返回 <code class="docutils literal"><span class="pre">None</span></code> 或者抛出一个异常。</p>
+<p>如果其返回 <code class="docutils literal"><span class="pre">None</span></code> ，Scrapy将会继续处理该response，调用所有其他的中间件直到spider处理该response。</p>
+<p>如果其跑出一个异常(exception)，Scrapy将不会调用任何其他中间件的
+<a class="reference internal" href="#scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_input" title="scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_input"><code class="xref py py-meth docutils literal"><span class="pre">process_spider_input()</span></code></a> 方法，并调用request的errback。
+errback的输出将会以另一个方向被重新输入到中间件链中，使用
+<a class="reference internal" href="#scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_output" title="scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_output"><code class="xref py py-meth docutils literal"><span class="pre">process_spider_output()</span></code></a> 方法来处理，当其抛出异常时则带调用
+<a class="reference internal" href="#scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_exception" title="scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_exception"><code class="xref py py-meth docutils literal"><span class="pre">process_spider_exception()</span></code></a> 。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name">
+<col class="field-body">
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first last simple">
+<li><strong>response</strong> (<a class="reference internal" href="request-response.html#scrapy.http.Response" title="scrapy.http.Response"><code class="xref py py-class docutils literal"><span class="pre">Response</span></code></a> 对象) – 被处理的response</li>
+<li><strong>spider</strong> (<a class="reference internal" href="spiders.html#scrapy.spider.Spider" title="scrapy.spider.Spider"><code class="xref py py-class docutils literal"><span class="pre">Spider</span></code></a> 对象) – 该response对应的spider</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_output">
+<code class="descname">process_spider_output</code><span class="sig-paren">(</span><em>response</em>, <em>result</em>, <em>spider</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_output" title="永久链接至目标">¶</a></dt>
+<dd><p>当Spider处理response返回result时，该方法被调用。</p>
+<p><a class="reference internal" href="#scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_output" title="scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_output"><code class="xref py py-meth docutils literal"><span class="pre">process_spider_output()</span></code></a> 必须返回包含
+<a class="reference internal" href="request-response.html#scrapy.http.Request" title="scrapy.http.Request"><code class="xref py py-class docutils literal"><span class="pre">Request</span></code></a> 或 <a class="reference internal" href="items.html#scrapy.item.Item" title="scrapy.item.Item"><code class="xref py py-class docutils literal"><span class="pre">Item</span></code></a> 对象的可迭代对象(iterable)。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name">
+<col class="field-body">
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first last simple">
+<li><strong>response</strong> (<a class="reference internal" href="request-response.html#scrapy.http.Response" title="scrapy.http.Response"><code class="xref py py-class docutils literal"><span class="pre">Response</span></code></a> 对象) – 生成该输出的response</li>
+<li><strong>result</strong> (包含 <a class="reference internal" href="request-response.html#scrapy.http.Request" title="scrapy.http.Request"><code class="xref py py-class docutils literal"><span class="pre">Request</span></code></a> 或
+<a class="reference internal" href="items.html#scrapy.item.Item" title="scrapy.item.Item"><code class="xref py py-class docutils literal"><span class="pre">Item</span></code></a> 对象的可迭代对象(iterable)) – spider返回的result</li>
+<li><strong>spider</strong> (<a class="reference internal" href="spiders.html#scrapy.spider.Spider" title="scrapy.spider.Spider"><code class="xref py py-class docutils literal"><span class="pre">Spider</span></code></a> 对象) – 其结果被处理的spider</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_exception">
+<code class="descname">process_spider_exception</code><span class="sig-paren">(</span><em>response</em>, <em>exception</em>, <em>spider</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_exception" title="永久链接至目标">¶</a></dt>
+<dd><p>当spider或(其他spider中间件的) <a class="reference internal" href="#scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_input" title="scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_input"><code class="xref py py-meth docutils literal"><span class="pre">process_spider_input()</span></code></a> 跑出异常时，
+该方法被调用。</p>
+<p><a class="reference internal" href="#scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_exception" title="scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_exception"><code class="xref py py-meth docutils literal"><span class="pre">process_spider_exception()</span></code></a> 必须要么返回 <code class="docutils literal"><span class="pre">None</span></code> ，
+要么返回一个包含 <a class="reference internal" href="request-response.html#scrapy.http.Response" title="scrapy.http.Response"><code class="xref py py-class docutils literal"><span class="pre">Response</span></code></a> 或 <a class="reference internal" href="items.html#scrapy.item.Item" title="scrapy.item.Item"><code class="xref py py-class docutils literal"><span class="pre">Item</span></code></a> 对象的可迭代对象(iterable)。</p>
+<p>如果其返回 <code class="docutils literal"><span class="pre">None</span></code> ，Scrapy将继续处理该异常，调用中间件链中的其他中间件的
+<a class="reference internal" href="#scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_exception" title="scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_exception"><code class="xref py py-meth docutils literal"><span class="pre">process_spider_exception()</span></code></a> 方法，直到所有中间件都被调用，该异常到达引擎(异常将被记录并被忽略)。</p>
+<p>如果其返回一个可迭代对象，则中间件链的 <a class="reference internal" href="#scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_output" title="scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_output"><code class="xref py py-meth docutils literal"><span class="pre">process_spider_output()</span></code></a> 方法被调用，
+其他的 <a class="reference internal" href="#scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_exception" title="scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_exception"><code class="xref py py-meth docutils literal"><span class="pre">process_spider_exception()</span></code></a> 将不会被调用。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name">
+<col class="field-body">
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first last simple">
+<li><strong>response</strong> (<a class="reference internal" href="request-response.html#scrapy.http.Response" title="scrapy.http.Response"><code class="xref py py-class docutils literal"><span class="pre">Response</span></code></a> 对象) – 异常被抛出时被处理的response</li>
+<li><strong>exception</strong> (<a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions.Exception">Exception</a> 对象) – 被跑出的异常</li>
+<li><strong>spider</strong> (<a class="reference internal" href="spiders.html#scrapy.spider.Spider" title="scrapy.spider.Spider"><code class="xref py py-class docutils literal"><span class="pre">Spider</span></code></a> 对象) – 抛出该异常的spider</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.contrib.spidermiddleware.SpiderMiddleware.process_start_requests">
+<code class="descname">process_start_requests</code><span class="sig-paren">(</span><em>start_requests</em>, <em>spider</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.contrib.spidermiddleware.SpiderMiddleware.process_start_requests" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">0.15 新版功能.</span></p>
+</div>
+<p>该方法以spider 启动的request为参数被调用，执行的过程类似于
+<a class="reference internal" href="#scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_output" title="scrapy.contrib.spidermiddleware.SpiderMiddleware.process_spider_output"><code class="xref py py-meth docutils literal"><span class="pre">process_spider_output()</span></code></a> ，只不过其没有相关联的response并且必须返回request(不是item)。</p>
+<p>其接受一个可迭代的对象(<code class="docutils literal"><span class="pre">start_requests</span></code> 参数)且必须返回另一个包含
+<a class="reference internal" href="request-response.html#scrapy.http.Request" title="scrapy.http.Request"><code class="xref py py-class docutils literal"><span class="pre">Request</span></code></a> 对象的可迭代对象。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">当在您的spider中间件实现该方法时，
+您必须返回一个可迭代对象(类似于参数start_requests)且不要遍历所有的 <code class="docutils literal"><span class="pre">start_requests</span></code>。
+该迭代器会很大(甚至是无限)，进而导致内存溢出。
+Scrapy引擎在其具有能力处理start request时将会拉起request，
+因此start request迭代器会变得无限，而由其他参数来停止spider(
+例如时间限制或者item/page记数)。</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name">
+<col class="field-body">
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first last simple">
+<li><strong>start_requests</strong> (包含 <a class="reference internal" href="request-response.html#scrapy.http.Request" title="scrapy.http.Request"><code class="xref py py-class docutils literal"><span class="pre">Request</span></code></a> 的可迭代对象) – start requests</li>
+<li><strong>spider</strong> (<a class="reference internal" href="spiders.html#scrapy.spider.Spider" title="scrapy.spider.Spider"><code class="xref py py-class docutils literal"><span class="pre">Spider</span></code></a> 对象) – start requests所属的spider</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="topics-spider-middleware-ref">
+<span id="id2"></span><h2>内置spider中间件参考手册<a class="headerlink" href="#topics-spider-middleware-ref" title="永久链接至标题">¶</a></h2>
+<p>本页面介绍了Scrapy自带的所有spider中间件。关于如何使用及编写您自己的中间件，请参考
+<a class="reference internal" href="#topics-spider-middleware"><span class="std std-ref">spider middleware usage guide</span></a>.</p>
+<p>关于默认启用的中间件列表(及其顺序)请参考
+<a class="reference internal" href="settings.html#std:setting-SPIDER_MIDDLEWARES_BASE"><code class="xref std std-setting docutils literal"><span class="pre">SPIDER_MIDDLEWARES_BASE</span></code></a> 设置。</p>
+<div class="section" id="module-scrapy.contrib.spidermiddleware.depth">
+<span id="depthmiddleware"></span><h3>DepthMiddleware<a class="headerlink" href="#module-scrapy.contrib.spidermiddleware.depth" title="永久链接至标题">¶</a></h3>
+<dl class="class">
+<dt id="scrapy.contrib.spidermiddleware.depth.DepthMiddleware">
+<em class="property">class </em><code class="descclassname">scrapy.contrib.spidermiddleware.depth.</code><code class="descname">DepthMiddleware</code><a class="headerlink" href="#scrapy.contrib.spidermiddleware.depth.DepthMiddleware" title="永久链接至目标">¶</a></dt>
+<dd><p>DepthMiddleware是一个用于追踪每个Request在被爬取的网站的深度的中间件。
+其可以用来限制爬取深度的最大深度或类似的事情。</p>
+<p><a class="reference internal" href="#scrapy.contrib.spidermiddleware.depth.DepthMiddleware" title="scrapy.contrib.spidermiddleware.depth.DepthMiddleware"><code class="xref py py-class docutils literal"><span class="pre">DepthMiddleware</span></code></a> 可以通过下列设置进行配置(更多内容请参考设置文档):</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="settings.html#std:setting-DEPTH_LIMIT"><code class="xref std std-setting docutils literal"><span class="pre">DEPTH_LIMIT</span></code></a> - 爬取所允许的最大深度，如果为0，则没有限制。</li>
+<li><a class="reference internal" href="settings.html#std:setting-DEPTH_STATS"><code class="xref std std-setting docutils literal"><span class="pre">DEPTH_STATS</span></code></a> - 是否收集爬取状态。</li>
+<li><a class="reference internal" href="settings.html#std:setting-DEPTH_PRIORITY"><code class="xref std std-setting docutils literal"><span class="pre">DEPTH_PRIORITY</span></code></a> - 是否根据其深度对requet安排优先级</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scrapy.contrib.spidermiddleware.httperror">
+<span id="httperrormiddleware"></span><h3>HttpErrorMiddleware<a class="headerlink" href="#module-scrapy.contrib.spidermiddleware.httperror" title="永久链接至标题">¶</a></h3>
+<dl class="class">
+<dt id="scrapy.contrib.spidermiddleware.httperror.HttpErrorMiddleware">
+<em class="property">class </em><code class="descclassname">scrapy.contrib.spidermiddleware.httperror.</code><code class="descname">HttpErrorMiddleware</code><a class="headerlink" href="#scrapy.contrib.spidermiddleware.httperror.HttpErrorMiddleware" title="永久链接至目标">¶</a></dt>
+<dd><p>过滤出所有失败(错误)的HTTP response，因此spider不需要处理这些request。
+处理这些request意味着消耗更多资源，并且使得spider逻辑更为复杂。</p>
+</dd></dl>
+
+<p>根据 <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html">HTTP标准</a> ，返回值为200-300之间的值为成功的resonse。</p>
+<p>如果您想处理在这个范围之外的response，您可以通过
+spider的 <code class="docutils literal"><span class="pre">handle_httpstatus_list</span></code> 属性或
+<a class="reference internal" href="#std:setting-HTTPERROR_ALLOWED_CODES"><code class="xref std std-setting docutils literal"><span class="pre">HTTPERROR_ALLOWED_CODES</span></code></a> 设置来指定spider能处理的response返回值。</p>
+<p>例如，如果您想要处理返回值为404的response您可以这么做:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">CrawlSpider</span><span class="p">):</span>
+    <span class="n">handle_httpstatus_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">404</span><span class="p">]</span>
+</pre></div>
+</div>
+<p id="std:reqmeta-handle_httpstatus_list"><a class="reference internal" href="request-response.html#scrapy.http.Request.meta" title="scrapy.http.Request.meta"><code class="xref py py-attr docutils literal"><span class="pre">Request.meta</span></code></a>
+中的 <code class="docutils literal"><span class="pre">handle_httpstatus_list</span></code> 键也可以用来指定每个request所允许的response code。</p>
+<p>不过请记住，除非您知道您在做什么，否则处理非200返回一般来说是个糟糕的决定。</p>
+<p>更多内容请参考: <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html">HTTP Status Code定义</a>.</p>
+<div class="section" id="httperrormiddleware-settings">
+<h4>HttpErrorMiddleware settings<a class="headerlink" href="#httperrormiddleware-settings" title="永久链接至标题">¶</a></h4>
+<div class="section" id="httperror-allowed-codes">
+<span id="std:setting-HTTPERROR_ALLOWED_CODES"></span><h5>HTTPERROR_ALLOWED_CODES<a class="headerlink" href="#httperror-allowed-codes" title="永久链接至标题">¶</a></h5>
+<p>默认: <code class="docutils literal"><span class="pre">[]</span></code></p>
+<p>忽略该列表中所有非200状态码的response。</p>
+</div>
+<div class="section" id="httperror-allow-all">
+<span id="std:setting-HTTPERROR_ALLOW_ALL"></span><h5>HTTPERROR_ALLOW_ALL<a class="headerlink" href="#httperror-allow-all" title="永久链接至标题">¶</a></h5>
+<p>默认: <code class="docutils literal"><span class="pre">False</span></code></p>
+<p>忽略所有response，不管其状态值。</p>
+</div>
+</div>
+</div>
+<div class="section" id="module-scrapy.contrib.spidermiddleware.offsite">
+<span id="offsitemiddleware"></span><h3>OffsiteMiddleware<a class="headerlink" href="#module-scrapy.contrib.spidermiddleware.offsite" title="永久链接至标题">¶</a></h3>
+<dl class="class">
+<dt id="scrapy.contrib.spidermiddleware.offsite.OffsiteMiddleware">
+<em class="property">class </em><code class="descclassname">scrapy.contrib.spidermiddleware.offsite.</code><code class="descname">OffsiteMiddleware</code><a class="headerlink" href="#scrapy.contrib.spidermiddleware.offsite.OffsiteMiddleware" title="永久链接至目标">¶</a></dt>
+<dd><p>过滤出所有URL不由该spider负责的Request。</p>
+<p>该中间件过滤出所有主机名不在spider属性
+<a class="reference internal" href="spiders.html#scrapy.spider.Spider.allowed_domains" title="scrapy.spider.Spider.allowed_domains"><code class="xref py py-attr docutils literal"><span class="pre">allowed_domains</span></code></a> 的request。</p>
+<p>当spide返回一个主机名不属于该spider的request时，
+该中间件将会做一个类似于下面的记录:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">DEBUG</span><span class="p">:</span> <span class="n">Filtered</span> <span class="n">offsite</span> <span class="n">request</span> <span class="n">to</span> <span class="s1">'www.othersite.com'</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">GET</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">othersite</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">some</span><span class="o">/</span><span class="n">page</span><span class="o">.</span><span class="n">html</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>为了避免记录太多无用信息，其将对每个新发现的网站记录一次。因此，例如，
+如果过滤出另一个 <code class="docutils literal"><span class="pre">www.othersite.com</span></code> 请求，将不会有新的记录。
+但如果过滤出 <code class="docutils literal"><span class="pre">someothersite.com</span></code> 请求，仍然会有记录信息(仅针对第一次)。</p>
+<p>如果spider没有定义
+<a class="reference internal" href="spiders.html#scrapy.spider.Spider.allowed_domains" title="scrapy.spider.Spider.allowed_domains"><code class="xref py py-attr docutils literal"><span class="pre">allowed_domains</span></code></a> 属性，或该属性为空，
+则offsite 中间件将会允许所有request。</p>
+<p>如果request设置了 <code class="xref py py-attr docutils literal"><span class="pre">dont_filter</span></code> 属性，
+即使该request的网站不在允许列表里，则offsite中间件将会允许该request。</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scrapy.contrib.spidermiddleware.referer">
+<span id="referermiddleware"></span><h3>RefererMiddleware<a class="headerlink" href="#module-scrapy.contrib.spidermiddleware.referer" title="永久链接至标题">¶</a></h3>
+<dl class="class">
+<dt id="scrapy.contrib.spidermiddleware.referer.RefererMiddleware">
+<em class="property">class </em><code class="descclassname">scrapy.contrib.spidermiddleware.referer.</code><code class="descname">RefererMiddleware</code><a class="headerlink" href="#scrapy.contrib.spidermiddleware.referer.RefererMiddleware" title="永久链接至目标">¶</a></dt>
+<dd><p>根据生成Request的Response的URL来设置Request <code class="docutils literal"><span class="pre">Referer</span></code> 字段。</p>
+</dd></dl>
+
+<div class="section" id="referermiddleware-settings">
+<h4>RefererMiddleware settings<a class="headerlink" href="#referermiddleware-settings" title="永久链接至标题">¶</a></h4>
+<div class="section" id="referer-enabled">
+<span id="std:setting-REFERER_ENABLED"></span><h5>REFERER_ENABLED<a class="headerlink" href="#referer-enabled" title="永久链接至标题">¶</a></h5>
+<div class="versionadded">
+<p><span class="versionmodified">0.15 新版功能.</span></p>
+</div>
+<p>默认: <code class="docutils literal"><span class="pre">True</span></code></p>
+<p>是否启用referer中间件。</p>
+</div>
+</div>
+</div>
+<div class="section" id="module-scrapy.contrib.spidermiddleware.urllength">
+<span id="urllengthmiddleware"></span><h3>UrlLengthMiddleware<a class="headerlink" href="#module-scrapy.contrib.spidermiddleware.urllength" title="永久链接至标题">¶</a></h3>
+<dl class="class">
+<dt id="scrapy.contrib.spidermiddleware.urllength.UrlLengthMiddleware">
+<em class="property">class </em><code class="descclassname">scrapy.contrib.spidermiddleware.urllength.</code><code class="descname">UrlLengthMiddleware</code><a class="headerlink" href="#scrapy.contrib.spidermiddleware.urllength.UrlLengthMiddleware" title="永久链接至目标">¶</a></dt>
+<dd><p>过滤出URL长度比URLLENGTH_LIMIT的request。</p>
+<p><a class="reference internal" href="#scrapy.contrib.spidermiddleware.urllength.UrlLengthMiddleware" title="scrapy.contrib.spidermiddleware.urllength.UrlLengthMiddleware"><code class="xref py py-class docutils literal"><span class="pre">UrlLengthMiddleware</span></code></a> 可以通过下列设置进行配置(更多内容请参考设置文档):</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="settings.html#std:setting-URLLENGTH_LIMIT"><code class="xref std std-setting docutils literal"><span class="pre">URLLENGTH_LIMIT</span></code></a> - 允许爬取URL最长的长度.</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+</div>
+</div>
+</div>

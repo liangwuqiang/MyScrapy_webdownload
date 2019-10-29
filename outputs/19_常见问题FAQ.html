@@ -1,0 +1,230 @@
+<div class="section" id="faq">
+<span id="id1"></span><h1>常见问题(FAQ)<a class="headerlink" href="#faq" title="永久链接至标题">¶</a></h1>
+<div class="section" id="scrapybeautifulsouplxml">
+<h2>Scrapy相BeautifulSoup或lxml比较,如何呢？<a class="headerlink" href="#scrapybeautifulsouplxml" title="永久链接至标题">¶</a></h2>
+<p><a class="reference external" href="http://www.crummy.com/software/BeautifulSoup/">BeautifulSoup</a> 及 <a class="reference external" href="http://lxml.de/">lxml</a> 是HTML和XML的分析库。Scrapy则是
+编写爬虫，爬取网页并获取数据的应用框架(application framework)。</p>
+<p>Scrapy提供了内置的机制来提取数据(叫做
+<a class="reference internal" href="topics/selectors.html#topics-selectors"><span class="std std-ref">选择器(selectors)</span></a>)。
+但如果您觉得使用更为方便，也可以使用 <a class="reference external" href="http://www.crummy.com/software/BeautifulSoup/">BeautifulSoup</a> (或 <a class="reference external" href="http://lxml.de/">lxml</a>)。
+总之，它们仅仅是分析库，可以在任何Python代码中被导入及使用。</p>
+<p>换句话说，拿Scrapy与 <a class="reference external" href="http://www.crummy.com/software/BeautifulSoup/">BeautifulSoup</a> (或 <a class="reference external" href="http://lxml.de/">lxml</a>) 比较就好像是拿
+<a class="reference external" href="http://jinja.pocoo.org/2/">jinja2</a> 与 <a class="reference external" href="http://www.djangoproject.com">Django</a> 相比。</p>
+</div>
+<div class="section" id="scrapypython">
+<span id="faq-python-versions"></span><h2>Scrapy支持那些Python版本？<a class="headerlink" href="#scrapypython" title="永久链接至标题">¶</a></h2>
+<p>Scrapy仅仅支持Python 2.7。
+Python2.6的支持从Scrapy 0.20开始被废弃了。</p>
+</div>
+<div class="section" id="scrapypython-3">
+<h2>Scrapy支持Python 3么？<a class="headerlink" href="#scrapypython-3" title="永久链接至标题">¶</a></h2>
+<p>不。但是Python 3.3+的支持已经在计划中了。
+现在，Scrapy支持Python 2.7。</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参见</p>
+<p class="last"><a class="reference internal" href="#faq-python-versions"><span class="std std-ref">Scrapy支持那些Python版本？</span></a>.</p>
+</div>
+</div>
+<div class="section" id="scrapydjango-x">
+<h2>Scrapy是否从Django中”剽窃”了X呢？<a class="headerlink" href="#scrapydjango-x" title="永久链接至标题">¶</a></h2>
+<p>也许吧，不过我们不喜欢这个词。我们认为 <a class="reference external" href="http://www.djangoproject.com">Django</a> 是一个很好的开源项目，同时也是
+一个很好的参考对象，所以我们把其作为Scrapy的启发对象。</p>
+<p>我们坚信，如果有些事情已经做得很好了，那就没必要再重复制造轮子。这个想法，作为
+开源项目及免费软件的基石之一，不仅仅针对软件，也包括文档，过程，政策等等。
+所以，与其自行解决每个问题，我们选择从其他已经很好地解决问题的项目中复制想法(copy idea)
+，并把注意力放在真正需要解决的问题上。</p>
+<p>如果Scrapy能启发其他的项目，我们将为此而自豪。欢迎来抄(steal)我们！</p>
+</div>
+<div class="section" id="scrapyhttp">
+<h2>Scrapy支持HTTP代理么？<a class="headerlink" href="#scrapyhttp" title="永久链接至标题">¶</a></h2>
+<p>是的。(从Scrapy 0.8开始)通过HTTP代理下载中间件对HTTP代理提供了支持。参考
+<a class="reference internal" href="topics/downloader-middleware.html#scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware" title="scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware"><code class="xref py py-class docutils literal"><span class="pre">HttpProxyMiddleware</span></code></a>.</p>
+</div>
+<div class="section" id="item">
+<h2>如何爬取属性在不同页面的item呢？<a class="headerlink" href="#item" title="永久链接至标题">¶</a></h2>
+<p>参考 <a class="reference internal" href="topics/request-response.html#topics-request-response-ref-request-callback-arguments"><span class="std std-ref">Passing additional data to callback functions</span></a>.</p>
+</div>
+<div class="section" id="scrapy-importerror-nomodule-named-win32api">
+<h2>Scrapy退出，ImportError: Nomodule named win32api<a class="headerlink" href="#scrapy-importerror-nomodule-named-win32api" title="永久链接至标题">¶</a></h2>
+<p><a class="reference external" href="http://twistedmatrix.com/trac/ticket/3707">这是个Twisted bug</a> ，您需要安装 <a class="reference external" href="http://sourceforge.net/projects/pywin32/">pywin32</a> 。</p>
+</div>
+<div class="section" id="spider">
+<h2>我要如何在spider里模拟用户登录呢?<a class="headerlink" href="#spider" title="永久链接至标题">¶</a></h2>
+<p>参考 <a class="reference internal" href="topics/request-response.html#topics-request-response-ref-request-userlogin"><span class="std std-ref">使用FormRequest.from_response()方法模拟用户登录</span></a>.</p>
+</div>
+<div class="section" id="scrapy">
+<h2>Scrapy是以广度优先还是深度优先进行爬取的呢？<a class="headerlink" href="#scrapy" title="永久链接至标题">¶</a></h2>
+<p>默认情况下，Scrapy使用 <a class="reference external" href="http://en.wikipedia.org/wiki/LIFO">LIFO</a> 队列来存储等待的请求。简单的说，就是
+<a class="reference external" href="http://en.wikipedia.org/wiki/Depth-first_search">深度优先顺序</a> 。深度优先对大多数情况下是更方便的。如果您想以
+<a class="reference external" href="http://en.wikipedia.org/wiki/Breadth-first_search">广度优先顺序</a> 进行爬取，你可以设置以下的设定:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">DEPTH_PRIORITY</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">SCHEDULER_DISK_QUEUE</span> <span class="o">=</span> <span class="s1">'scrapy.squeue.PickleFifoDiskQueue'</span>
+<span class="n">SCHEDULER_MEMORY_QUEUE</span> <span class="o">=</span> <span class="s1">'scrapy.squeue.FifoMemoryQueue'</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>我的Scrapy爬虫有内存泄露，怎么办?<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>参考 <a class="reference internal" href="topics/leaks.html#topics-leaks"><span class="std std-ref">调试内存溢出</span></a>.</p>
+<p>另外，Python自己也有内存泄露，在
+<a class="reference internal" href="topics/leaks.html#topics-leaks-without-leaks"><span class="std std-ref">Leaks without leaks</span></a> 有所描述。</p>
+</div>
+<div class="section" id="id4">
+<h2>如何让Scrapy减少内存消耗?<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>参考上一个问题</p>
+</div>
+<div class="section" id="spiderhttp">
+<h2>我能在spider中使用基本HTTP认证么？<a class="headerlink" href="#spiderhttp" title="永久链接至标题">¶</a></h2>
+<p>可以。参考 <a class="reference internal" href="topics/downloader-middleware.html#scrapy.contrib.downloadermiddleware.httpauth.HttpAuthMiddleware" title="scrapy.contrib.downloadermiddleware.httpauth.HttpAuthMiddleware"><code class="xref py py-class docutils literal"><span class="pre">HttpAuthMiddleware</span></code></a>.</p>
+</div>
+<div class="section" id="id5">
+<h2>为什么Scrapy下载了英文的页面，而不是我的本国语言？<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>尝试通过覆盖 <a class="reference internal" href="topics/settings.html#std:setting-DEFAULT_REQUEST_HEADERS"><code class="xref std std-setting docutils literal"><span class="pre">DEFAULT_REQUEST_HEADERS</span></code></a> 设置来修改默认的 <a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4">Accept-Language</a> 请求头。</p>
+</div>
+<div class="section" id="id6">
+<h2>我能在哪里找到Scrapy项目的例子？<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<p>参考 <a class="reference internal" href="intro/examples.html#intro-examples"><span class="std std-ref">例子</span></a>.</p>
+</div>
+<div class="section" id="scrapy-spider">
+<h2>我能在不创建Scrapy项目的情况下运行一个爬虫(spider)么？<a class="headerlink" href="#scrapy-spider" title="永久链接至标题">¶</a></h2>
+<p>是的。您可以使用 <a class="reference internal" href="topics/commands.html#std:command-runspider"><code class="xref std std-command docutils literal"><span class="pre">runspider</span></code></a> 命令。例如，如果您有个
+spider写在 <code class="docutils literal"><span class="pre">my_spider.py</span></code> 文件中，您可以运行:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">scrapy</span> <span class="n">runspider</span> <span class="n">my_spider</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>详情请参考 <a class="reference internal" href="topics/commands.html#std:command-runspider"><code class="xref std std-command docutils literal"><span class="pre">runspider</span></code></a> 命令。</p>
+</div>
+<div class="section" id="filtered-offsite-request">
+<h2>我收到了 “Filtered offsite request” 消息。如何修复？<a class="headerlink" href="#filtered-offsite-request" title="永久链接至标题">¶</a></h2>
+<p>这些消息(以 <code class="docutils literal"><span class="pre">DEBUG</span></code> 所记录)并不意味着有问题，所以你可以不修复它们。</p>
+<p>这些消息由Offsite Spider中间件(Middleware)所抛出。
+该(默认启用的)中间件筛选出了不属于当前spider的站点请求。</p>
+<p>更多详情请参见:
+<a class="reference internal" href="topics/spider-middleware.html#scrapy.contrib.spidermiddleware.offsite.OffsiteMiddleware" title="scrapy.contrib.spidermiddleware.offsite.OffsiteMiddleware"><code class="xref py py-class docutils literal"><span class="pre">OffsiteMiddleware</span></code></a>.</p>
+</div>
+<div class="section" id="id7">
+<h2>发布Scrapy爬虫到生产环境的推荐方式？<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+<p>参见 <a class="reference internal" href="topics/scrapyd.html#topics-scrapyd"><span class="std std-ref">Scrapyd</span></a>.</p>
+</div>
+<div class="section" id="large-exports-json">
+<h2>我能对大数据(large exports)使用JSON么？<a class="headerlink" href="#large-exports-json" title="永久链接至标题">¶</a></h2>
+<p>这取决于您的输出有多大。参考
+<a class="reference internal" href="topics/exporters.html#scrapy.contrib.exporter.JsonItemExporter" title="scrapy.contrib.exporter.JsonItemExporter"><code class="xref py py-class docutils literal"><span class="pre">JsonItemExporter</span></code></a> 文档中的
+<a class="reference internal" href="topics/exporters.html#json-with-large-data"><span class="std std-ref">这个警告</span></a></p>
+</div>
+<div class="section" id="signal-handler-twisted">
+<h2>我能在信号处理器(signal handler)中返回(Twisted)引用么？<a class="headerlink" href="#signal-handler-twisted" title="永久链接至标题">¶</a></h2>
+<p>有些信号支持从处理器中返回引用，有些不行。参考
+<a class="reference internal" href="topics/signals.html#topics-signals-ref"><span class="std std-ref">内置信号参考手册(Built-in signals reference)</span></a> 来了解详情。</p>
+</div>
+<div class="section" id="reponse999">
+<h2>reponse返回的状态值999代表了什么?<a class="headerlink" href="#reponse999" title="永久链接至标题">¶</a></h2>
+<p>999是雅虎用来控制请求量所定义的返回值。
+试着减慢爬取速度，将spider的下载延迟改为 <code class="docutils literal"><span class="pre">2</span></code> 或更高:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">CrawlSpider</span><span class="p">):</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">'myspider'</span>
+
+    <span class="n">download_delay</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="c1"># [ ... rest of the spider code ... ]</span>
+</pre></div>
+</div>
+<p>或在 <a class="reference internal" href="topics/settings.html#std:setting-DOWNLOAD_DELAY"><code class="xref std std-setting docutils literal"><span class="pre">DOWNLOAD_DELAY</span></code></a> 中设置项目的全局下载延迟。</p>
+</div>
+<div class="section" id="spider-pdb-set-trace">
+<h2>我能在spider中调用 <code class="docutils literal"><span class="pre">pdb.set_trace()</span></code> 来调试么？<a class="headerlink" href="#spider-pdb-set-trace" title="永久链接至标题">¶</a></h2>
+<p>可以，但你也可以使用Scrapy终端。这能让你快速分析(甚至修改)
+spider处理返回的返回(response)。通常来说，比老旧的 <code class="docutils literal"><span class="pre">pdb.set_trace()</span></code> 有用多了。</p>
+<p>更多详情请参考 <a class="reference internal" href="topics/shell.html#topics-shell-inspect-response"><span class="std std-ref">在spider中启动shell来查看response</span></a>.</p>
+</div>
+<div class="section" id="item-dump-json-csv-xml">
+<h2>将所有爬取到的item转存(dump)到JSON/CSV/XML文件的最简单的方法?<a class="headerlink" href="#item-dump-json-csv-xml" title="永久链接至标题">¶</a></h2>
+<p>dump到JSON文件:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">scrapy</span> <span class="n">crawl</span> <span class="n">myspider</span> <span class="o">-</span><span class="n">o</span> <span class="n">items</span><span class="o">.</span><span class="n">json</span>
+</pre></div>
+</div>
+<p>dump到CSV文件:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">scrapy</span> <span class="n">crawl</span> <span class="n">myspider</span> <span class="o">-</span><span class="n">o</span> <span class="n">items</span><span class="o">.</span><span class="n">csv</span>
+</pre></div>
+</div>
+<p>dump到XML文件:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">scrapy</span> <span class="n">crawl</span> <span class="n">myspider</span> <span class="o">-</span><span class="n">o</span> <span class="n">items</span><span class="o">.</span><span class="n">xml</span>
+</pre></div>
+</div>
+<p>更多详情请参考 <a class="reference internal" href="topics/feed-exports.html#topics-feed-exports"><span class="std std-ref">Feed exports</span></a></p>
+</div>
+<div class="section" id="viewstate">
+<h2>在某些表单中巨大神秘的 <code class="docutils literal"><span class="pre">__VIEWSTATE</span></code> 参数是什么？<a class="headerlink" href="#viewstate" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">__VIEWSTATE</span></code> 参数存在于ASP.NET/VB.NET建立的站点中。关于这个参数的作用请参考
+<a class="reference external" href="http://search.cpan.org/~ecarroll/HTML-TreeBuilderX-ASP_NET-0.09/lib/HTML/TreeBuilderX/ASP_NET.pm">这篇文章</a> 。这里有一个爬取这种站点的
+<a class="reference external" href="http://github.com/AmbientLighter/rpn-fas/blob/master/fas/spiders/rnp.py">样例爬虫</a> 。</p>
+</div>
+<div class="section" id="xml-csv">
+<h2>分析大XML/CSV数据源的最好方法是?<a class="headerlink" href="#xml-csv" title="永久链接至标题">¶</a></h2>
+<p>使用XPath选择器来分析大数据源可能会有问题。选择器需要在内存中对数据建立完整的
+DOM树，这过程速度很慢且消耗大量内存。</p>
+<p>为了避免一次性读取整个数据源，您可以使用
+<code class="docutils literal"><span class="pre">scrapy.utils.iterators</span></code> 中的 <code class="docutils literal"><span class="pre">xmliter</span></code> 及 <code class="docutils literal"><span class="pre">csviter</span></code> 方法。
+实际上，这也是feed spider(参考 <a class="reference internal" href="topics/spiders.html#topics-spiders"><span class="std std-ref">Spiders</span></a>)中的处理方法。</p>
+</div>
+<div class="section" id="scrapycookies">
+<h2>Scrapy自动管理cookies么？<a class="headerlink" href="#scrapycookies" title="永久链接至标题">¶</a></h2>
+<p>是的，Scrapy接收并保持服务器返回来的cookies，在之后的请求会发送回去，就像正常的网页浏览器做的那样。</p>
+<p>更多详情请参考 <a class="reference internal" href="topics/request-response.html#topics-request-response"><span class="std std-ref">Requests and Responses</span></a> 及 <a class="reference internal" href="topics/downloader-middleware.html#cookies-mw"><span class="std std-ref">CookiesMiddleware</span></a> 。</p>
+</div>
+<div class="section" id="scrapyscrapy">
+<h2>如何才能看到Scrapy发出及接收到的Scrapy呢？<a class="headerlink" href="#scrapyscrapy" title="永久链接至标题">¶</a></h2>
+<p>启用 <a class="reference internal" href="topics/downloader-middleware.html#std:setting-COOKIES_DEBUG"><code class="xref std std-setting docutils literal"><span class="pre">COOKIES_DEBUG</span></code></a> 选项。</p>
+</div>
+<div class="section" id="id10">
+<h2>要怎么停止爬虫呢?<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h2>
+<p>在回调函数中raise <a class="reference internal" href="topics/exceptions.html#scrapy.exceptions.CloseSpider" title="scrapy.exceptions.CloseSpider"><code class="xref py py-exc docutils literal"><span class="pre">CloseSpider</span></code></a> 异常。
+更多详情请参见: <a class="reference internal" href="topics/exceptions.html#scrapy.exceptions.CloseSpider" title="scrapy.exceptions.CloseSpider"><code class="xref py py-exc docutils literal"><span class="pre">CloseSpider</span></code></a> 。</p>
+</div>
+<div class="section" id="scrapy-bot-ban">
+<h2>如何避免我的Scrapy机器人(bot)被禁止(ban)呢？<a class="headerlink" href="#scrapy-bot-ban" title="永久链接至标题">¶</a></h2>
+<p>参考 <a class="reference internal" href="topics/practices.html#bans"><span class="std std-ref">避免被禁止(ban)</span></a>.</p>
+</div>
+<div class="section" id="spider-arguments-settings-spider">
+<h2>我应该使用spider参数(arguments)还是设置(settings)来配置spider呢？<a class="headerlink" href="#spider-arguments-settings-spider" title="永久链接至标题">¶</a></h2>
+<p><a class="reference internal" href="topics/spiders.html#spiderargs"><span class="std std-ref">spider参数</span></a> 及 <a class="reference internal" href="topics/settings.html#topics-settings"><span class="std std-ref">设置(settings)</span></a> 都可以用来配置您的spider。
+没有什么强制的规则来限定要使用哪个，但设置(settings)更适合那些一旦设置就不怎么会修改的参数，
+而spider参数则意味着修改更为频繁，在每次spider运行都有修改，甚至是spider运行所必须的元素
+(例如，设置spider的起始url)。</p>
+<p>这里以例子来说明这个问题。假设您有一个spider需要登录某个网站来
+爬取数据，并且仅仅想爬取特定网站的特定部分(每次都不一定相同)。
+在这个情况下，认证的信息将写在设置中，而爬取的特定部分的url将是spider参数。</p>
+</div>
+<div class="section" id="xmlxpathitem">
+<h2>我爬取了一个XML文档但是XPath选择器不返回任何的item<a class="headerlink" href="#xmlxpathitem" title="永久链接至标题">¶</a></h2>
+<p>也许您需要移除命名空间(namespace)。参见 <a class="reference internal" href="topics/selectors.html#removing-namespaces"><span class="std std-ref">移除命名空间</span></a>.</p>
+</div>
+<div class="section" id="name-crawler">
+<h2>我得到错误: “不能导入name crawler“<a class="headerlink" href="#name-crawler" title="永久链接至标题">¶</a></h2>
+<p>这是由于Scrapy修改，去掉了单例模式(singletons)所引起的。
+这个错误一般是由从 <code class="docutils literal"><span class="pre">scrapy.project</span></code> 导入 <code class="docutils literal"><span class="pre">crawler</span></code> 的模块引起的(扩展，中间件，pipeline或spider)。
+例如:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy.project</span> <span class="k">import</span> <span class="n">crawler</span>
+
+<span class="k">class</span> <span class="nc">SomeExtension</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">crawler</span> <span class="o">=</span> <span class="n">crawler</span>
+        <span class="c1"># ...</span>
+</pre></div>
+</div>
+<p>这种访问crawler对象的方式已经被舍弃了，新的代码应该使用
+<code class="docutils literal"><span class="pre">from_crawler</span></code> 类方法来移植，例如:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SomeExtension</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_crawler</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">crawler</span><span class="p">):</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="n">o</span><span class="o">.</span><span class="n">crawler</span> <span class="o">=</span> <span class="n">crawler</span>
+        <span class="k">return</span> <span class="n">o</span>
+</pre></div>
+</div>
+<p>Scrapy终端工具(command line tool)针对旧的导入机制提供了一些支持(给出了废弃警告)，
+但如果您以不同方式使用Scrapy(例如，作为类库)，该机制可能会失效。</p>
+</div>
+</div>

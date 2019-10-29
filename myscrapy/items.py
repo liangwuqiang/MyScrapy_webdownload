@@ -12,3 +12,13 @@ class MyscrapyItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     pass
+
+
+class ScrapyChsItem(scrapy.Item):
+    sn = scrapy.Field()
+    url = scrapy.Field()
+    title = scrapy.Field()
+    content = scrapy.Field()
+    image_urls = scrapy.Field()
+    pass
+

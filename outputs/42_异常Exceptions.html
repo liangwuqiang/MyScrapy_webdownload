@@ -1,0 +1,76 @@
+<div class="section" id="module-scrapy.exceptions">
+<span id="exceptions"></span><span id="topics-exceptions"></span><h1>异常(Exceptions)<a class="headerlink" href="#module-scrapy.exceptions" title="永久链接至标题">¶</a></h1>
+<div class="section" id="built-in-exceptions-reference">
+<span id="topics-exceptions-ref"></span><h2>内置异常参考手册(Built-in Exceptions reference)<a class="headerlink" href="#built-in-exceptions-reference" title="永久链接至标题">¶</a></h2>
+<p>下面是Scrapy提供的异常及其用法。</p>
+<div class="section" id="dropitem">
+<h3>DropItem<a class="headerlink" href="#dropitem" title="永久链接至标题">¶</a></h3>
+<dl class="exception">
+<dt id="scrapy.exceptions.DropItem">
+<em class="property">exception </em><code class="descclassname">scrapy.exceptions.</code><code class="descname">DropItem</code><a class="headerlink" href="#scrapy.exceptions.DropItem" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<p>该异常由item pipeline抛出，用于停止处理item。详细内容请参考
+<a class="reference internal" href="item-pipeline.html#topics-item-pipeline"><span class="std std-ref">Item Pipeline</span></a> 。</p>
+</div>
+<div class="section" id="closespider">
+<h3>CloseSpider<a class="headerlink" href="#closespider" title="永久链接至标题">¶</a></h3>
+<dl class="exception">
+<dt id="scrapy.exceptions.CloseSpider">
+<em class="property">exception </em><code class="descclassname">scrapy.exceptions.</code><code class="descname">CloseSpider</code><span class="sig-paren">(</span><em>reason='cancelled'</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.exceptions.CloseSpider" title="永久链接至目标">¶</a></dt>
+<dd><p>该异常由spider的回调函数(callback)抛出，来暂停/停止spider。支持的参数:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name">
+<col class="field-body">
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><strong>reason</strong> (<em>str</em>) – 关闭的原因</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>样例:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">parse_page</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">'Bandwidth exceeded'</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">body</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CloseSpider</span><span class="p">(</span><span class="s1">'bandwidth_exceeded'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ignorerequest">
+<h3>IgnoreRequest<a class="headerlink" href="#ignorerequest" title="永久链接至标题">¶</a></h3>
+<dl class="exception">
+<dt id="scrapy.exceptions.IgnoreRequest">
+<em class="property">exception </em><code class="descclassname">scrapy.exceptions.</code><code class="descname">IgnoreRequest</code><a class="headerlink" href="#scrapy.exceptions.IgnoreRequest" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<p>该异常由调度器(Scheduler)或其他下载中间件抛出，声明忽略该request。</p>
+</div>
+<div class="section" id="notconfigured">
+<h3>NotConfigured<a class="headerlink" href="#notconfigured" title="永久链接至标题">¶</a></h3>
+<dl class="exception">
+<dt id="scrapy.exceptions.NotConfigured">
+<em class="property">exception </em><code class="descclassname">scrapy.exceptions.</code><code class="descname">NotConfigured</code><a class="headerlink" href="#scrapy.exceptions.NotConfigured" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<p>该异常由某些组件抛出，声明其仍然保持关闭。这些组件包括:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Extensions</li>
+<li>Item pipelines</li>
+<li>Downloader middlwares</li>
+<li>Spider middlewares</li>
+</ul>
+</div></blockquote>
+<p>该异常必须由组件的构造器(constructor)抛出。</p>
+</div>
+<div class="section" id="notsupported">
+<h3>NotSupported<a class="headerlink" href="#notsupported" title="永久链接至标题">¶</a></h3>
+<dl class="exception">
+<dt id="scrapy.exceptions.NotSupported">
+<em class="property">exception </em><code class="descclassname">scrapy.exceptions.</code><code class="descname">NotSupported</code><a class="headerlink" href="#scrapy.exceptions.NotSupported" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<p>该异常声明一个不支持的特性。</p>
+</div>
+</div>
+</div>

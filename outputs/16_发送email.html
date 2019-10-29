@@ -1,0 +1,134 @@
+<div class="section" id="module-scrapy.mail">
+<span id="email"></span><span id="topics-email"></span><h1>发送email<a class="headerlink" href="#module-scrapy.mail" title="永久链接至标题">¶</a></h1>
+<p>虽然Python通过 <a class="reference external" href="http://docs.python.org/library/smtplib.html">smtplib</a> 库使得发送email变得很简单，Scrapy仍然提供了自己的实现。
+该功能十分易用，同时由于采用了 <a class="reference external" href="http://twistedmatrix.com/documents/current/core/howto/defer-intro.html">Twisted非阻塞式(non-blocking)IO</a> ，其避免了对爬虫的非阻塞式IO的影响。
+另外，其也提供了简单的API来发送附件。
+通过一些 <a class="reference internal" href="#topics-email-settings"><span class="std std-ref">settings</span></a> 设置，您可以很简单的进行配置。</p>
+<div class="section" id="id1">
+<h2>简单例子<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>有两种方法可以创建邮件发送器(mail sender)。
+您可以通过标准构造器(constructor)创建:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy.mail</span> <span class="k">import</span> <span class="n">MailSender</span>
+<span class="n">mailer</span> <span class="o">=</span> <span class="n">MailSender</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>或者您可以传递一个Scrapy设置对象，其会参考
+<a class="reference internal" href="#topics-email-settings"><span class="std std-ref">settings</span></a>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mailer</span> <span class="o">=</span> <span class="n">MailSender</span><span class="o">.</span><span class="n">from_settings</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>这是如何来发送邮件了(不包括附件):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mailer</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">to</span><span class="o">=</span><span class="p">[</span><span class="s2">"someone@example.com"</span><span class="p">],</span> <span class="n">subject</span><span class="o">=</span><span class="s2">"Some subject"</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="s2">"Some body"</span><span class="p">,</span> <span class="n">cc</span><span class="o">=</span><span class="p">[</span><span class="s2">"another@example.com"</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mailsender">
+<h2>MailSender类参考手册<a class="headerlink" href="#mailsender" title="永久链接至标题">¶</a></h2>
+<p>在Scrapy中发送email推荐使用MailSender。其同框架中其他的部分一样，使用了
+<a class="reference external" href="http://twistedmatrix.com/documents/current/core/howto/defer-intro.html">Twisted非阻塞式(non-blocking)IO</a> 。</p>
+<dl class="class">
+<dt id="scrapy.mail.MailSender">
+<em class="property">class </em><code class="descclassname">scrapy.mail.</code><code class="descname">MailSender</code><span class="sig-paren">(</span><em>smtphost=None</em>, <em>mailfrom=None</em>, <em>smtpuser=None</em>, <em>smtppass=None</em>, <em>smtpport=None</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.mail.MailSender" title="永久链接至目标">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name">
+<col class="field-body">
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first last simple">
+<li><strong>smtphost</strong> (<em>str</em>) – 发送email的SMTP主机(host)。如果忽略，则使用 <a class="reference internal" href="#std:setting-MAIL_HOST"><code class="xref std std-setting docutils literal"><span class="pre">MAIL_HOST</span></code></a> 。</li>
+<li><strong>mailfrom</strong> (<em>str</em>) – 用于发送email的地址(address)(填入 <code class="docutils literal"><span class="pre">From:</span></code>) 。
+如果忽略，则使用 <a class="reference internal" href="#std:setting-MAIL_FROM"><code class="xref std std-setting docutils literal"><span class="pre">MAIL_FROM</span></code></a> 。</li>
+<li><strong>smtpuser</strong> – SMTP用户。如果忽略,则使用 <a class="reference internal" href="#std:setting-MAIL_USER"><code class="xref std std-setting docutils literal"><span class="pre">MAIL_USER</span></code></a> 。
+如果未给定，则将不会进行SMTP认证(authentication)。</li>
+<li><strong>smtppass</strong> (<em>str</em>) – SMTP认证的密码</li>
+<li><strong>smtpport</strong> (<em>int</em>) – SMTP连接的短裤</li>
+<li><strong>smtptls</strong> – 强制使用STARTTLS</li>
+<li><strong>smtpssl</strong> (<em>boolean</em>) – 强制使用SSL连接</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="classmethod">
+<dt id="scrapy.mail.MailSender.from_settings">
+<em class="property">classmethod </em><code class="descname">from_settings</code><span class="sig-paren">(</span><em>settings</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.mail.MailSender.from_settings" title="永久链接至目标">¶</a></dt>
+<dd><p>使用Scrapy设置对象来初始化对象。其会参考
+<a class="reference internal" href="#topics-email-settings"><span class="std std-ref">这些Scrapy设置</span></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name">
+<col class="field-body">
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><strong>settings</strong> (<a class="reference internal" href="api.html#scrapy.settings.Settings" title="scrapy.settings.Settings"><code class="xref py py-class docutils literal"><span class="pre">scrapy.settings.Settings</span></code></a> object) – the e-mail recipients</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.mail.MailSender.send">
+<code class="descname">send</code><span class="sig-paren">(</span><em>to</em>, <em>subject</em>, <em>body</em>, <em>cc=None</em>, <em>attachs=()</em>, <em>mimetype='text/plain'</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.mail.MailSender.send" title="永久链接至目标">¶</a></dt>
+<dd><p>发送email到给定的接收者。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name">
+<col class="field-body">
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first last simple">
+<li><strong>to</strong> (<em>list</em>) – email接收者</li>
+<li><strong>subject</strong> (<em>str</em>) – email内容</li>
+<li><strong>cc</strong> (<em>list</em>) – 抄送的人</li>
+<li><strong>body</strong> (<em>str</em>) – email的内容</li>
+<li><strong>attachs</strong> (<em>iterable</em>) – 可迭代的元组 <code class="docutils literal"><span class="pre">(attach_name,</span> <span class="pre">mimetype,</span> <span class="pre">file_object)</span></code>。
+<code class="docutils literal"><span class="pre">attach_name</span></code> 是一个在email的附件中显示的名字的字符串，
+<code class="docutils literal"><span class="pre">mimetype</span></code> 是附件的mime类型，
+<code class="docutils literal"><span class="pre">file_object</span></code> 是包含附件内容的可读的文件对象。</li>
+<li><strong>mimetype</strong> (<em>str</em>) – email的mime类型</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="mail">
+<span id="topics-email-settings"></span><h2>Mail设置<a class="headerlink" href="#mail" title="永久链接至标题">¶</a></h2>
+<p>这些设置定义了
+<a class="reference internal" href="#scrapy.mail.MailSender" title="scrapy.mail.MailSender"><code class="xref py py-class docutils literal"><span class="pre">MailSender</span></code></a> 构造器的默认值。其使得在您不编写任何一行代码的情况下，为您的项目配置实现email通知的功能。</p>
+<div class="section" id="mail-from">
+<span id="std:setting-MAIL_FROM"></span><h3>MAIL_FROM<a class="headerlink" href="#mail-from" title="永久链接至标题">¶</a></h3>
+<p>默认值: <code class="docutils literal"><span class="pre">'scrapy@localhost'</span></code></p>
+<p>用于发送email的地址(address)(填入 <code class="docutils literal"><span class="pre">From:</span></code>) 。</p>
+</div>
+<div class="section" id="mail-host">
+<span id="std:setting-MAIL_HOST"></span><h3>MAIL_HOST<a class="headerlink" href="#mail-host" title="永久链接至标题">¶</a></h3>
+<p>默认值: <code class="docutils literal"><span class="pre">'localhost'</span></code></p>
+<p>发送email的SMTP主机(host)。</p>
+</div>
+<div class="section" id="mail-port">
+<span id="std:setting-MAIL_PORT"></span><h3>MAIL_PORT<a class="headerlink" href="#mail-port" title="永久链接至标题">¶</a></h3>
+<p>默认值: <code class="docutils literal"><span class="pre">25</span></code></p>
+<p>发用邮件的SMTP端口。</p>
+</div>
+<div class="section" id="mail-user">
+<span id="std:setting-MAIL_USER"></span><h3>MAIL_USER<a class="headerlink" href="#mail-user" title="永久链接至标题">¶</a></h3>
+<p>默认值: <code class="docutils literal"><span class="pre">None</span></code></p>
+<p>SMTP用户。如果未给定，则将不会进行SMTP认证(authentication)。</p>
+</div>
+<div class="section" id="mail-pass">
+<span id="std:setting-MAIL_PASS"></span><h3>MAIL_PASS<a class="headerlink" href="#mail-pass" title="永久链接至标题">¶</a></h3>
+<p>默认值: <code class="docutils literal"><span class="pre">None</span></code></p>
+<p>用于SMTP认证，与 <a class="reference internal" href="#std:setting-MAIL_USER"><code class="xref std std-setting docutils literal"><span class="pre">MAIL_USER</span></code></a> 配套的密码。</p>
+</div>
+<div class="section" id="mail-tls">
+<span id="std:setting-MAIL_TLS"></span><h3>MAIL_TLS<a class="headerlink" href="#mail-tls" title="永久链接至标题">¶</a></h3>
+<p>默认值: <code class="docutils literal"><span class="pre">False</span></code></p>
+<p>强制使用STARTTLS。STARTTLS能使得在已经存在的不安全连接上，通过使用SSL/TLS来实现安全连接。</p>
+</div>
+<div class="section" id="mail-ssl">
+<span id="std:setting-MAIL_SSL"></span><h3>MAIL_SSL<a class="headerlink" href="#mail-ssl" title="永久链接至标题">¶</a></h3>
+<p>默认值: <code class="docutils literal"><span class="pre">False</span></code></p>
+<p>强制使用SSL加密连接。</p>
+</div>
+</div>
+</div>

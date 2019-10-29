@@ -1,0 +1,118 @@
+<div class="section" id="common-practices">
+<span id="topics-practices"></span><h1>实践经验(Common Practices)<a class="headerlink" href="#common-practices" title="永久链接至标题">¶</a></h1>
+<p>本章节记录了使用Scrapy的一些实践经验(common practices)。
+这包含了很多使用不会包含在其他特定章节的的内容。</p>
+<div class="section" id="scrapy">
+<span id="run-from-script"></span><h2>在脚本中运行Scrapy<a class="headerlink" href="#scrapy" title="永久链接至标题">¶</a></h2>
+<p>除了常用的 <code class="docutils literal"><span class="pre">scrapy</span> <span class="pre">crawl</span></code> 来启动Scrapy，您也可以使用 <a class="reference internal" href="api.html#topics-api"><span class="std std-ref">API</span></a> 在脚本中启动Scrapy。</p>
+<p>需要注意的是，Scrapy是在Twisted异步网络库上构建的，
+因此其必须在Twisted reactor里运行。</p>
+<p>另外，在spider运行结束后，您必须自行关闭Twisted reactor。
+这可以通过设置 <code class="docutils literal"><span class="pre">signals.spider_closed</span></code> 信号的处理器(handler)来实现。</p>
+<p>下面给出了如何实现的例子，使用 <a class="reference external" href="https://github.com/scrapinghub/testspiders">testspiders</a> 项目作为例子。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="k">import</span> <span class="n">reactor</span>
+<span class="kn">from</span> <span class="nn">scrapy.crawler</span> <span class="k">import</span> <span class="n">Crawler</span>
+<span class="kn">from</span> <span class="nn">scrapy</span> <span class="k">import</span> <span class="n">log</span><span class="p">,</span> <span class="n">signals</span>
+<span class="kn">from</span> <span class="nn">testspiders.spiders.followall</span> <span class="k">import</span> <span class="n">FollowAllSpider</span>
+<span class="kn">from</span> <span class="nn">scrapy.utils.project</span> <span class="k">import</span> <span class="n">get_project_settings</span>
+
+<span class="n">spider</span> <span class="o">=</span> <span class="n">FollowAllSpider</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="s1">'scrapinghub.com'</span><span class="p">)</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">get_project_settings</span><span class="p">()</span>
+<span class="n">crawler</span> <span class="o">=</span> <span class="n">Crawler</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+<span class="n">crawler</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">reactor</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span> <span class="n">signal</span><span class="o">=</span><span class="n">signals</span><span class="o">.</span><span class="n">spider_closed</span><span class="p">)</span>
+<span class="n">crawler</span><span class="o">.</span><span class="n">configure</span><span class="p">()</span>
+<span class="n">crawler</span><span class="o">.</span><span class="n">crawl</span><span class="p">(</span><span class="n">spider</span><span class="p">)</span>
+<span class="n">crawler</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">log</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">reactor</span><span class="o">.</span><span class="n">run</span><span class="p">()</span> <span class="c1"># the script will block here until the spider_closed signal was sent</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">参见</p>
+<p class="last"><a class="reference external" href="http://twistedmatrix.com/documents/current/core/howto/reactor-basics.html">Twisted Reactor Overview</a>.</p>
+</div>
+</div>
+<div class="section" id="spider">
+<h2>同一进程运行多个spider<a class="headerlink" href="#spider" title="永久链接至标题">¶</a></h2>
+<p>默认情况下，当您执行 <code class="docutils literal"><span class="pre">scrapy</span> <span class="pre">crawl</span></code> 时，Scrapy每个进程运行一个spider。
+当然，Scrapy通过
+<a class="reference internal" href="api.html#topics-api"><span class="std std-ref">内部(internal)API</span></a>
+也支持单进程多个spider。</p>
+<p>下面以 <a class="reference external" href="https://github.com/scrapinghub/testspiders">testspiders</a> 作为例子:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="k">import</span> <span class="n">reactor</span>
+<span class="kn">from</span> <span class="nn">scrapy.crawler</span> <span class="k">import</span> <span class="n">Crawler</span>
+<span class="kn">from</span> <span class="nn">scrapy</span> <span class="k">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">testspiders.spiders.followall</span> <span class="k">import</span> <span class="n">FollowAllSpider</span>
+<span class="kn">from</span> <span class="nn">scrapy.utils.project</span> <span class="k">import</span> <span class="n">get_project_settings</span>
+
+<span class="k">def</span> <span class="nf">setup_crawler</span><span class="p">(</span><span class="n">domain</span><span class="p">):</span>
+    <span class="n">spider</span> <span class="o">=</span> <span class="n">FollowAllSpider</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">)</span>
+    <span class="n">settings</span> <span class="o">=</span> <span class="n">get_project_settings</span><span class="p">()</span>
+    <span class="n">crawler</span> <span class="o">=</span> <span class="n">Crawler</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+    <span class="n">crawler</span><span class="o">.</span><span class="n">configure</span><span class="p">()</span>
+    <span class="n">crawler</span><span class="o">.</span><span class="n">crawl</span><span class="p">(</span><span class="n">spider</span><span class="p">)</span>
+    <span class="n">crawler</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">domain</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'scrapinghub.com'</span><span class="p">,</span> <span class="s1">'insophia.com'</span><span class="p">]:</span>
+    <span class="n">setup_crawler</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+<span class="n">log</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">reactor</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">参见</p>
+<p class="last"><a class="reference internal" href="#run-from-script"><span class="std std-ref">在脚本中运行Scrapy</span></a>.</p>
+</div>
+</div>
+<div class="section" id="distributed-crawls">
+<span id="id1"></span><h2>分布式爬虫(Distributed crawls)<a class="headerlink" href="#distributed-crawls" title="永久链接至标题">¶</a></h2>
+<p>Scrapy并没有提供内置的机制支持分布式(多服务器)爬取。不过还是有办法进行分布式爬取，
+取决于您要怎么分布了。</p>
+<p>如果您有很多spider，那分布负载最简单的办法就是启动多个Scrapyd，并分配到不同机器上。</p>
+<p>如果想要在多个机器上运行一个单独的spider，那您可以将要爬取的url进行分块，并发送给spider。
+例如:</p>
+<p>首先，准备要爬取的url列表，并分配到不同的文件url里:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">somedomain</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">urls</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">crawl</span><span class="o">/</span><span class="n">spider1</span><span class="o">/</span><span class="n">part1</span><span class="o">.</span><span class="n">list</span>
+<span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">somedomain</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">urls</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">crawl</span><span class="o">/</span><span class="n">spider1</span><span class="o">/</span><span class="n">part2</span><span class="o">.</span><span class="n">list</span>
+<span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">somedomain</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">urls</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">crawl</span><span class="o">/</span><span class="n">spider1</span><span class="o">/</span><span class="n">part3</span><span class="o">.</span><span class="n">list</span>
+</pre></div>
+</div>
+<p>接着在3个不同的Scrapd服务器中启动spider。spider会接收一个(spider)参数 <code class="docutils literal"><span class="pre">part</span></code> ，
+该参数表示要爬取的分块:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">scrapy1</span><span class="o">.</span><span class="n">mycompany</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="mi">6800</span><span class="o">/</span><span class="n">schedule</span><span class="o">.</span><span class="n">json</span> <span class="o">-</span><span class="n">d</span> <span class="n">project</span><span class="o">=</span><span class="n">myproject</span> <span class="o">-</span><span class="n">d</span> <span class="n">spider</span><span class="o">=</span><span class="n">spider1</span> <span class="o">-</span><span class="n">d</span> <span class="n">part</span><span class="o">=</span><span class="mi">1</span>
+<span class="n">curl</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">scrapy2</span><span class="o">.</span><span class="n">mycompany</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="mi">6800</span><span class="o">/</span><span class="n">schedule</span><span class="o">.</span><span class="n">json</span> <span class="o">-</span><span class="n">d</span> <span class="n">project</span><span class="o">=</span><span class="n">myproject</span> <span class="o">-</span><span class="n">d</span> <span class="n">spider</span><span class="o">=</span><span class="n">spider1</span> <span class="o">-</span><span class="n">d</span> <span class="n">part</span><span class="o">=</span><span class="mi">2</span>
+<span class="n">curl</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">scrapy3</span><span class="o">.</span><span class="n">mycompany</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="mi">6800</span><span class="o">/</span><span class="n">schedule</span><span class="o">.</span><span class="n">json</span> <span class="o">-</span><span class="n">d</span> <span class="n">project</span><span class="o">=</span><span class="n">myproject</span> <span class="o">-</span><span class="n">d</span> <span class="n">spider</span><span class="o">=</span><span class="n">spider1</span> <span class="o">-</span><span class="n">d</span> <span class="n">part</span><span class="o">=</span><span class="mi">3</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ban">
+<span id="bans"></span><h2>避免被禁止(ban)<a class="headerlink" href="#ban" title="永久链接至标题">¶</a></h2>
+<p>有些网站实现了特定的机制，以一定规则来避免被爬虫爬取。
+与这些规则打交道并不容易，需要技巧，有时候也需要些特别的基础。
+如果有疑问请考虑联系 <a class="reference external" href="http://scrapy.org/support/">商业支持</a> 。</p>
+<p>下面是些处理这些站点的建议(tips):</p>
+<ul class="simple">
+<li>使用user agent池，轮流选择之一来作为user agent。池中包含常见的浏览器的user agent(google一下一大堆)</li>
+<li>禁止cookies(参考 <a class="reference internal" href="downloader-middleware.html#std:setting-COOKIES_ENABLED"><code class="xref std std-setting docutils literal"><span class="pre">COOKIES_ENABLED</span></code></a>)，有些站点会使用cookies来发现爬虫的轨迹。</li>
+<li>设置下载延迟(2或更高)。参考 <a class="reference internal" href="settings.html#std:setting-DOWNLOAD_DELAY"><code class="xref std std-setting docutils literal"><span class="pre">DOWNLOAD_DELAY</span></code></a> 设置。</li>
+<li>如果可行，使用 <a class="reference external" href="http://www.googleguide.com/cached_pages.html">Google cache</a> 来爬取数据，而不是直接访问站点。</li>
+<li>使用IP池。例如免费的 <a class="reference external" href="https://www.torproject.org/">Tor项目</a> 或付费服务(<a class="reference external" href="http://proxymesh.com/">ProxyMesh</a>)。</li>
+<li>使用高度分布式的下载器(downloader)来绕过禁止(ban)，您就只需要专注分析处理页面。这样的例子有:
+<a class="reference external" href="http://crawlera.com">Crawlera</a></li>
+</ul>
+<p>如果您仍然无法避免被ban，考虑联系
+<a class="reference external" href="http://scrapy.org/support/">商业支持</a>.</p>
+</div>
+<div class="section" id="item">
+<span id="dynamic-item-classes"></span><h2>动态创建Item类<a class="headerlink" href="#item" title="永久链接至标题">¶</a></h2>
+<p>对于有些应用，item的结构由用户输入或者其他变化的情况所控制。您可以动态创建class。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy.item</span> <span class="k">import</span> <span class="n">DictItem</span><span class="p">,</span> <span class="n">Field</span>
+
+<span class="k">def</span> <span class="nf">create_item_class</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="n">field_list</span><span class="p">):</span>
+<span class="n">fields</span> <span class="o">=</span> <span class="p">{</span><span class="n">field_name</span><span class="p">:</span> <span class="n">Field</span><span class="p">()</span> <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">field_list</span><span class="p">}</span>
+
+<span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="p">(</span><span class="n">DictItem</span><span class="p">,),</span> <span class="p">{</span><span class="s1">'fields'</span><span class="p">:</span> <span class="n">fields</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</div>

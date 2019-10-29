@@ -1,0 +1,156 @@
+<div class="section" id="module-scrapy.telnet">
+<span id="telnet-telnet-console"></span><span id="topics-telnetconsole"></span><h1>Telnet终端(Telnet Console)<a class="headerlink" href="#module-scrapy.telnet" title="永久链接至标题">¶</a></h1>
+<p>Scrapy提供了内置的telnet终端，以供检查，控制Scrapy运行的进程。
+telnet仅仅是一个运行在Scrapy进程中的普通python终端。因此您可以在其中做任何事。</p>
+<p>telnet终端是一个
+<a class="reference internal" href="extensions.html#topics-extensions-ref"><span class="std std-ref">自带的Scrapy扩展</span></a> 。
+该扩展默认为启用，不过您也可以关闭。
+关于扩展的更多内容请参考
+<a class="reference internal" href="extensions.html#topics-extensions-ref-telnetconsole"><span class="std std-ref">Telnet console 扩展</span></a> 。</p>
+<div class="section" id="telnet">
+<h2>如何访问telnet终端<a class="headerlink" href="#telnet" title="永久链接至标题">¶</a></h2>
+<p>telnet终端监听设置中定义的
+<a class="reference internal" href="#std:setting-TELNETCONSOLE_PORT"><code class="xref std std-setting docutils literal"><span class="pre">TELNETCONSOLE_PORT</span></code></a> ，默认为 <code class="docutils literal"><span class="pre">6023</span></code> 。
+访问telnet请输入:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>telnet localhost 6023
+&gt;&gt;&gt;
+</pre></div>
+</div>
+<p>Windows及大多数Linux发行版都自带了所需的telnet程序。</p>
+</div>
+<div class="section" id="id1">
+<h2>telnet终端中可用的变量<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>telnet仅仅是一个运行在Scrapy进程中的普通python终端。因此您可以做任何事情，甚至是导入新终端。</p>
+<p>telnet为了方便提供了一些默认定义的变量:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%">
+<col width="81%">
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">快捷名称</th>
+<th class="head">描述</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">crawler</span></code></td>
+<td>Scrapy Crawler (<a class="reference internal" href="api.html#scrapy.crawler.Crawler" title="scrapy.crawler.Crawler"><code class="xref py py-class docutils literal"><span class="pre">scrapy.crawler.Crawler</span></code></a> 对象)</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">engine</span></code></td>
+<td>Crawler.engine属性</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">spider</span></code></td>
+<td>当前激活的爬虫(spider)</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">slot</span></code></td>
+<td>the engine slot</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">extensions</span></code></td>
+<td>扩展管理器(manager) (Crawler.extensions属性)</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">stats</span></code></td>
+<td>状态收集器 (Crawler.stats属性)</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">settings</span></code></td>
+<td>Scrapy设置(setting)对象 (Crawler.settings属性)</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">est</span></code></td>
+<td>打印引擎状态的报告</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">prefs</span></code></td>
+<td>针对内存调试 (参考 <a class="reference internal" href="leaks.html#topics-leaks"><span class="std std-ref">调试内存溢出</span></a>)</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">p</span></code></td>
+<td><a class="reference external" href="http://docs.python.org/library/pprint.html#pprint.pprint">pprint.pprint</a> 函数的简写</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">hpy</span></code></td>
+<td>针对内存调试 (参考 <a class="reference internal" href="leaks.html#topics-leaks"><span class="std std-ref">调试内存溢出</span></a>)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="telnet-console-usage-examples">
+<h2>Telnet console usage examples<a class="headerlink" href="#telnet-console-usage-examples" title="永久链接至标题">¶</a></h2>
+<p>下面是使用telnet终端的一些例子:</p>
+<div class="section" id="id2">
+<h3>查看引擎状态<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
+<p>在终端中您可以使用Scrapy引擎的 <code class="docutils literal"><span class="pre">est()</span></code> 方法来快速查看状态:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>telnet localhost 6023
+&gt;&gt;&gt; est()
+Execution engine status
+
+time()-engine.start_time                        : 8.62972998619
+engine.has_capacity()                           : False
+len(engine.downloader.active)                   : 16
+engine.scraper.is_idle()                        : False
+engine.spider.name                              : followall
+engine.spider_is_idle(engine.spider)            : False
+engine.slot.closing                             : False
+len(engine.slot.inprogress)                     : 16
+len(engine.slot.scheduler.dqs or [])            : 0
+len(engine.slot.scheduler.mqs)                  : 92
+len(engine.scraper.slot.queue)                  : 0
+len(engine.scraper.slot.active)                 : 0
+engine.scraper.slot.active_size                 : 0
+engine.scraper.slot.itemproc_size               : 0
+engine.scraper.slot.needs_backout()             : False
+</pre></div>
+</div>
+</div>
+<div class="section" id="scrapy">
+<h3>暂停，恢复和停止Scrapy引擎<a class="headerlink" href="#scrapy" title="永久链接至标题">¶</a></h3>
+<p>暂停:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>telnet localhost 6023
+&gt;&gt;&gt; engine.pause()
+&gt;&gt;&gt;
+</pre></div>
+</div>
+<p>恢复:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>telnet localhost 6023
+&gt;&gt;&gt; engine.unpause()
+&gt;&gt;&gt;
+</pre></div>
+</div>
+<p>停止:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>telnet localhost 6023
+&gt;&gt;&gt; engine.stop()
+Connection closed by foreign host.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>Telnet终端信号<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<span class="target" id="std:signal-update_telnet_vars"></span><dl class="function">
+<dt id="scrapy.telnet.update_telnet_vars">
+<code class="descclassname">scrapy.telnet.</code><code class="descname">update_telnet_vars</code><span class="sig-paren">(</span><em>telnet_vars</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.telnet.update_telnet_vars" title="永久链接至目标">¶</a></dt>
+<dd><p>在telnet终端开启前发送该信号。您可以挂载(hook up)该信号来添加，移除或更新
+telnet本地命名空间可用的变量。
+您可以通过在您的处理函数(handler)中更新 <code class="docutils literal"><span class="pre">telnet_vars</span></code> 字典来实现该修改。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name">
+<col class="field-body">
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><strong>telnet_vars</strong> (<em>dict</em>) – telnet变量的字典</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="id4">
+<h2>Telnet设定<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>以下是终端的一些设定:</p>
+<div class="section" id="telnetconsole-port">
+<span id="std:setting-TELNETCONSOLE_PORT"></span><h3>TELNETCONSOLE_PORT<a class="headerlink" href="#telnetconsole-port" title="永久链接至标题">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">[6023,</span> <span class="pre">6073]</span></code></p>
+<p>telnet终端使用的端口范围。如果设为 <code class="docutils literal"><span class="pre">None</span></code> 或 <code class="docutils literal"><span class="pre">0</span></code> ，
+则动态分配端口。</p>
+</div>
+<div class="section" id="telnetconsole-host">
+<span id="std:setting-TELNETCONSOLE_HOST"></span><h3>TELNETCONSOLE_HOST<a class="headerlink" href="#telnetconsole-host" title="永久链接至标题">¶</a></h3>
+<p>默认: <code class="docutils literal"><span class="pre">'127.0.0.1'</span></code></p>
+<p>telnet终端监听的接口(interface)。</p>
+</div>
+</div>
+</div>

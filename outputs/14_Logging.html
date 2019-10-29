@@ -1,0 +1,128 @@
+<div class="section" id="logging">
+<span id="topics-logging"></span><h1>Logging<a class="headerlink" href="#logging" title="永久链接至标题">¶</a></h1>
+<p>Scrapy提供了log功能。您可以通过
+<a class="reference internal" href="#module-scrapy.log" title="scrapy.log: Logging facility"><code class="xref py py-mod docutils literal"><span class="pre">scrapy.log</span></code></a> 模块使用。当前底层实现使用了 <a class="reference external" href="http://twistedmatrix.com/projects/core/documentation/howto/logging.html">Twisted logging</a> ，不过可能在之后会有所变化。</p>
+<p>log服务必须通过显示调用 <a class="reference internal" href="#scrapy.log.start" title="scrapy.log.start"><code class="xref py py-func docutils literal"><span class="pre">scrapy.log.start()</span></code></a> 来开启。</p>
+<div class="section" id="log-levels">
+<span id="topics-logging-levels"></span><h2>Log levels<a class="headerlink" href="#log-levels" title="永久链接至标题">¶</a></h2>
+<p>Scrapy提供5层logging级别:</p>
+<ol class="arabic simple">
+<li><a class="reference internal" href="#scrapy.log.CRITICAL" title="scrapy.log.CRITICAL"><code class="xref py py-data docutils literal"><span class="pre">CRITICAL</span></code></a> - 严重错误(critical)</li>
+<li><a class="reference internal" href="#scrapy.log.ERROR" title="scrapy.log.ERROR"><code class="xref py py-data docutils literal"><span class="pre">ERROR</span></code></a> - 一般错误(regular errors)</li>
+<li><a class="reference internal" href="#scrapy.log.WARNING" title="scrapy.log.WARNING"><code class="xref py py-data docutils literal"><span class="pre">WARNING</span></code></a> - 警告信息(warning messages)</li>
+<li><a class="reference internal" href="#scrapy.log.INFO" title="scrapy.log.INFO"><code class="xref py py-data docutils literal"><span class="pre">INFO</span></code></a> - 一般信息(informational messages)</li>
+<li><a class="reference internal" href="#scrapy.log.DEBUG" title="scrapy.log.DEBUG"><code class="xref py py-data docutils literal"><span class="pre">DEBUG</span></code></a> - 调试信息(debugging messages)</li>
+</ol>
+</div>
+<div class="section" id="log">
+<h2>如何设置log级别<a class="headerlink" href="#log" title="永久链接至标题">¶</a></h2>
+<p>您可以通过终端选项(command line option) <cite>–loglevel/-L</cite> 或 <a class="reference internal" href="settings.html#std:setting-LOG_LEVEL"><code class="xref std std-setting docutils literal"><span class="pre">LOG_LEVEL</span></code></a> 来设置log级别。</p>
+</div>
+<div class="section" id="log-messages">
+<h2>如何记录信息(log messages)<a class="headerlink" href="#log-messages" title="永久链接至标题">¶</a></h2>
+<p>下面给出如何使用 <code class="docutils literal"><span class="pre">WARNING</span></code> 级别来记录信息的例子:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy</span> <span class="k">import</span> <span class="n">log</span>
+<span class="n">log</span><span class="o">.</span><span class="n">msg</span><span class="p">(</span><span class="s2">"This is a warning"</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">log</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="spiderlog-logging-from-spiders">
+<h2>在Spider中添加log(Logging from Spiders)<a class="headerlink" href="#spiderlog-logging-from-spiders" title="永久链接至标题">¶</a></h2>
+<p>在spider中添加log的推荐方式是使用Spider的
+<a class="reference internal" href="spiders.html#scrapy.spider.Spider.log" title="scrapy.spider.Spider.log"><code class="xref py py-meth docutils literal"><span class="pre">log()</span></code></a> 方法。该方法会自动在调用
+<a class="reference internal" href="#scrapy.log.msg" title="scrapy.log.msg"><code class="xref py py-func docutils literal"><span class="pre">scrapy.log.msg()</span></code></a> 时赋值 <code class="docutils literal"><span class="pre">spider</span></code> 参数。其他的参数则直接传递给
+<a class="reference internal" href="#scrapy.log.msg" title="scrapy.log.msg"><code class="xref py py-func docutils literal"><span class="pre">msg()</span></code></a> 方法。</p>
+</div>
+<div class="section" id="module-scrapy.log">
+<span id="scrapy-log"></span><h2>scrapy.log模块<a class="headerlink" href="#module-scrapy.log" title="永久链接至标题">¶</a></h2>
+<dl class="function">
+<dt id="scrapy.log.start">
+<code class="descclassname">scrapy.log.</code><code class="descname">start</code><span class="sig-paren">(</span><em>logfile=None</em>, <em>loglevel=None</em>, <em>logstdout=None</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.log.start" title="永久链接至目标">¶</a></dt>
+<dd><p>启动log功能。该方法必须在记录(log)任何信息前被调用。否则调用前的信息将会丢失。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name">
+<col class="field-body">
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first last simple">
+<li><strong>logfile</strong> (<em>str</em>) – 用于保存log输出的文件路径。如果被忽略，
+<a class="reference internal" href="settings.html#std:setting-LOG_FILE"><code class="xref std std-setting docutils literal"><span class="pre">LOG_FILE</span></code></a> 设置会被使用。
+如果两个参数都是 <code class="docutils literal"><span class="pre">None</span></code> ，log将会被输出到标准错误流(standard error)。</li>
+<li><strong>loglevel</strong> – 记录的最低的log级别. 可用的值有:
+<a class="reference internal" href="#scrapy.log.CRITICAL" title="scrapy.log.CRITICAL"><code class="xref py py-data docutils literal"><span class="pre">CRITICAL</span></code></a>, <a class="reference internal" href="#scrapy.log.ERROR" title="scrapy.log.ERROR"><code class="xref py py-data docutils literal"><span class="pre">ERROR</span></code></a>, <a class="reference internal" href="#scrapy.log.WARNING" title="scrapy.log.WARNING"><code class="xref py py-data docutils literal"><span class="pre">WARNING</span></code></a>, <a class="reference internal" href="#scrapy.log.INFO" title="scrapy.log.INFO"><code class="xref py py-data docutils literal"><span class="pre">INFO</span></code></a> and
+<a class="reference internal" href="#scrapy.log.DEBUG" title="scrapy.log.DEBUG"><code class="xref py py-data docutils literal"><span class="pre">DEBUG</span></code></a>.</li>
+<li><strong>logstdout</strong> (<em>boolean</em>) – 如果为 <code class="docutils literal"><span class="pre">True</span></code> ，
+所有您的应用的标准输出(包括错误)将会被记录(logged instead)。
+例如，如果您调用 “print ‘hello’” ，则’hello’ 会在Scrapy的log中被显示。
+如果被忽略，则 <a class="reference internal" href="settings.html#std:setting-LOG_STDOUT"><code class="xref std std-setting docutils literal"><span class="pre">LOG_STDOUT</span></code></a> 设置会被使用。</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scrapy.log.msg">
+<code class="descclassname">scrapy.log.</code><code class="descname">msg</code><span class="sig-paren">(</span><em>message</em>, <em>level=INFO</em>, <em>spider=None</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.log.msg" title="永久链接至目标">¶</a></dt>
+<dd><p>记录信息(Log a message)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name">
+<col class="field-body">
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first last simple">
+<li><strong>message</strong> (<em>str</em>) – log的信息</li>
+<li><strong>level</strong> – 该信息的log级别. 参考
+<a class="reference internal" href="#topics-logging-levels"><span class="std std-ref">Log levels</span></a>.</li>
+<li><strong>spider</strong> (<a class="reference internal" href="spiders.html#scrapy.spider.Spider" title="scrapy.spider.Spider"><code class="xref py py-class docutils literal"><span class="pre">Spider</span></code></a> 对象) – 记录该信息的spider. 当记录的信息和特定的spider有关联时，该参数必须被使用。</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="data">
+<dt id="scrapy.log.CRITICAL">
+<code class="descclassname">scrapy.log.</code><code class="descname">CRITICAL</code><a class="headerlink" href="#scrapy.log.CRITICAL" title="永久链接至目标">¶</a></dt>
+<dd><p>严重错误的Log级别</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="scrapy.log.ERROR">
+<code class="descclassname">scrapy.log.</code><code class="descname">ERROR</code><a class="headerlink" href="#scrapy.log.ERROR" title="永久链接至目标">¶</a></dt>
+<dd><p>错误的Log级别
+Log level for errors</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="scrapy.log.WARNING">
+<code class="descclassname">scrapy.log.</code><code class="descname">WARNING</code><a class="headerlink" href="#scrapy.log.WARNING" title="永久链接至目标">¶</a></dt>
+<dd><p>警告的Log级别
+Log level for warnings</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="scrapy.log.INFO">
+<code class="descclassname">scrapy.log.</code><code class="descname">INFO</code><a class="headerlink" href="#scrapy.log.INFO" title="永久链接至目标">¶</a></dt>
+<dd><p>记录信息的Log级别(生产部署时推荐的Log级别)</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="scrapy.log.DEBUG">
+<code class="descclassname">scrapy.log.</code><code class="descname">DEBUG</code><a class="headerlink" href="#scrapy.log.DEBUG" title="永久链接至目标">¶</a></dt>
+<dd><p>调试信息的Log级别(开发时推荐的Log级别)</p>
+</dd></dl>
+
+</div>
+<div class="section" id="id1">
+<h2>Logging设置<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>以下设置可以被用来配置logging:</p>
+<ul class="simple">
+<li><a class="reference internal" href="settings.html#std:setting-LOG_ENABLED"><code class="xref std std-setting docutils literal"><span class="pre">LOG_ENABLED</span></code></a></li>
+<li><a class="reference internal" href="settings.html#std:setting-LOG_ENCODING"><code class="xref std std-setting docutils literal"><span class="pre">LOG_ENCODING</span></code></a></li>
+<li><a class="reference internal" href="settings.html#std:setting-LOG_FILE"><code class="xref std std-setting docutils literal"><span class="pre">LOG_FILE</span></code></a></li>
+<li><a class="reference internal" href="settings.html#std:setting-LOG_LEVEL"><code class="xref std std-setting docutils literal"><span class="pre">LOG_LEVEL</span></code></a></li>
+<li><a class="reference internal" href="settings.html#std:setting-LOG_STDOUT"><code class="xref std std-setting docutils literal"><span class="pre">LOG_STDOUT</span></code></a></li>
+</ul>
+</div>
+</div>

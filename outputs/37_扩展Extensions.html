@@ -1,0 +1,313 @@
+<div class="section" id="extensions">
+<span id="topics-extensions"></span><h1>扩展(Extensions)<a class="headerlink" href="#extensions" title="永久链接至标题">¶</a></h1>
+<p>扩展框架提供一个机制，使得你能将自定义功能绑定到Scrapy。</p>
+<p>扩展只是正常的类，它们在Scrapy启动时被实例化、初始化。</p>
+<div class="section" id="extension-settings">
+<h2>扩展设置(Extension settings)<a class="headerlink" href="#extension-settings" title="永久链接至标题">¶</a></h2>
+<p>扩展使用 <a class="reference internal" href="settings.html#topics-settings"><span class="std std-ref">Scrapy settings</span></a> 管理它们的设置，这跟其他Scrapy代码一样。</p>
+<p>通常扩展需要给它们的设置加上前缀，以避免跟已有(或将来)的扩展冲突。
+比如，一个扩展处理 <a class="reference external" href="http://en.wikipedia.org/wiki/Sitemaps">Google Sitemaps</a>，
+则可以使用类似 <cite>GOOGLESITEMAP_ENABLED</cite>、<cite>GOOGLESITEMAP_DEPTH</cite> 等设置。</p>
+</div>
+<div class="section" id="id1">
+<h2>加载和激活扩展<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>扩展在扩展类被实例化时加载和激活。
+因此，所有扩展的实例化代码必须在类的构造函数(<code class="docutils literal"><span class="pre">__init__</span></code>)中执行。</p>
+<p>要使得扩展可用，需要把它添加到Scrapy的 <a class="reference internal" href="settings.html#std:setting-EXTENSIONS"><code class="xref std std-setting docutils literal"><span class="pre">EXTENSIONS</span></code></a> 配置中。
+在 <a class="reference internal" href="settings.html#std:setting-EXTENSIONS"><code class="xref std std-setting docutils literal"><span class="pre">EXTENSIONS</span></code></a> 中，每个扩展都使用一个字符串表示，即扩展类的全Python路径。
+比如:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">EXTENSIONS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'scrapy.contrib.corestats.CoreStats'</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="s1">'scrapy.webservice.WebService'</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="s1">'scrapy.telnet.TelnetConsole'</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如你所见，<a class="reference internal" href="settings.html#std:setting-EXTENSIONS"><code class="xref std std-setting docutils literal"><span class="pre">EXTENSIONS</span></code></a> 配置是一个dict，key是扩展类的路径，value是顺序,
+它定义扩展加载的顺序。扩展顺序不像中间件的顺序那么重要，而且扩展之间一般没有关联。
+扩展加载的顺序并不重要，因为它们并不相互依赖。</p>
+<p>如果你需要添加扩展而且它依赖别的扩展，你就可以使用该特性了。</p>
+<p>[1] 这也是为什么Scrapy的配置项 <a class="reference internal" href="settings.html#std:setting-EXTENSIONS_BASE"><code class="xref std std-setting docutils literal"><span class="pre">EXTENSIONS_BASE</span></code></a>
+(它包括了所有内置且开启的扩展)定义所有扩展的顺序都相同 (<code class="docutils literal"><span class="pre">500</span></code>)。</p>
+</div>
+<div class="section" id="available-enabled-disabled">
+<h2>可用的(Available)、开启的(enabled)和禁用的(disabled)的扩展<a class="headerlink" href="#available-enabled-disabled" title="永久链接至标题">¶</a></h2>
+<p>并不是所有可用的扩展都会被开启。一些扩展经常依赖一些特别的配置。
+比如，HTTP Cache扩展是可用的但默认是禁用的，除非 <a class="reference internal" href="downloader-middleware.html#std:setting-HTTPCACHE_ENABLED"><code class="xref std std-setting docutils literal"><span class="pre">HTTPCACHE_ENABLED</span></code></a> 配置项设置了。</p>
+</div>
+<div class="section" id="disabling-an-extension">
+<h2>禁用扩展(Disabling an extension)<a class="headerlink" href="#disabling-an-extension" title="永久链接至标题">¶</a></h2>
+<p>为了禁用一个默认开启的扩展(比如，包含在 <a class="reference internal" href="settings.html#std:setting-EXTENSIONS_BASE"><code class="xref std std-setting docutils literal"><span class="pre">EXTENSIONS_BASE</span></code></a> 中的扩展)，
+需要将其顺序(order)设置为 <code class="docutils literal"><span class="pre">None</span></code> 。比如:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">EXTENSIONS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'scrapy.contrib.corestats.CoreStats'</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>实现你的扩展<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>实现你的扩展很简单。每个扩展是一个单一的Python class，它不需要实现任何特殊的方法。</p>
+<p>Scrapy扩展(包括middlewares和pipelines)的主要入口是 <code class="docutils literal"><span class="pre">from_crawler</span></code> 类方法，
+它接收一个 <code class="docutils literal"><span class="pre">Crawler</span></code> 类的实例，该实例是控制Scrapy crawler的主要对象。
+如果扩展需要，你可以通过这个对象访问settings，signals，stats，控制爬虫的行为。</p>
+<p>通常来说，扩展关联到 <a class="reference internal" href="signals.html#topics-signals"><span class="std std-ref">signals</span></a> 并执行它们触发的任务。</p>
+<p>最后，如果 <code class="docutils literal"><span class="pre">from_crawler</span></code> 方法抛出 <a class="reference internal" href="exceptions.html#scrapy.exceptions.NotConfigured" title="scrapy.exceptions.NotConfigured"><code class="xref py py-exc docutils literal"><span class="pre">NotConfigured</span></code></a> 异常，
+扩展会被禁用。否则，扩展会被开启。</p>
+<div class="section" id="sample-extension">
+<h3>扩展例子(Sample extension)<a class="headerlink" href="#sample-extension" title="永久链接至标题">¶</a></h3>
+<p>这里我们将实现一个简单的扩展来演示上面描述到的概念。
+该扩展会在以下事件时记录一条日志：</p>
+<ul class="simple">
+<li>spider被打开</li>
+<li>spider被关闭</li>
+<li>爬取了特定数量的条目(items)</li>
+</ul>
+<p>该扩展通过 <code class="docutils literal"><span class="pre">MYEXT_ENABLED</span></code> 配置项开启，
+items的数量通过 <code class="docutils literal"><span class="pre">MYEXT_ITEMCOUNT</span></code> 配置项设置。</p>
+<p>以下是扩展的代码:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy</span> <span class="k">import</span> <span class="n">signals</span>
+<span class="kn">from</span> <span class="nn">scrapy.exceptions</span> <span class="k">import</span> <span class="n">NotConfigured</span>
+
+<span class="k">class</span> <span class="nc">SpiderOpenCloseLogging</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_count</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">item_count</span> <span class="o">=</span> <span class="n">item_count</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">items_scraped</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_crawler</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">crawler</span><span class="p">):</span>
+        <span class="c1"># first check if the extension should be enabled and raise</span>
+
+        <span class="c1"># NotConfigured otherwise</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">crawler</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">getbool</span><span class="p">(</span><span class="s1">'MYEXT_ENABLED'</span><span class="p">):</span>
+
+            <span class="k">raise</span> <span class="n">NotConfigured</span>
+
+        <span class="c1"># get the number of items from settings</span>
+
+        <span class="n">item_count</span> <span class="o">=</span> <span class="n">crawler</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">getint</span><span class="p">(</span><span class="s1">'MYEXT_ITEMCOUNT'</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+
+        <span class="c1"># instantiate the extension object</span>
+
+        <span class="n">ext</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">item_count</span><span class="p">)</span>
+
+        <span class="c1"># connect the extension object to signals</span>
+
+        <span class="n">crawler</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">ext</span><span class="o">.</span><span class="n">spider_opened</span><span class="p">,</span> <span class="n">signal</span><span class="o">=</span><span class="n">signals</span><span class="o">.</span><span class="n">spider_opened</span><span class="p">)</span>
+
+        <span class="n">crawler</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">ext</span><span class="o">.</span><span class="n">spider_closed</span><span class="p">,</span> <span class="n">signal</span><span class="o">=</span><span class="n">signals</span><span class="o">.</span><span class="n">spider_closed</span><span class="p">)</span>
+
+        <span class="n">crawler</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">ext</span><span class="o">.</span><span class="n">item_scraped</span><span class="p">,</span> <span class="n">signal</span><span class="o">=</span><span class="n">signals</span><span class="o">.</span><span class="n">item_scraped</span><span class="p">)</span>
+
+        <span class="c1"># return the extension object</span>
+
+        <span class="k">return</span> <span class="n">ext</span>
+
+    <span class="k">def</span> <span class="nf">spider_opened</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spider</span><span class="p">):</span>
+        <span class="n">spider</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">"opened spider </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">spider</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">spider_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spider</span><span class="p">):</span>
+        <span class="n">spider</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">"closed spider </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">spider</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">item_scraped</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">spider</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">items_scraped</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">items_scraped</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">spider</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">"scraped </span><span class="si">%d</span><span class="s2"> items"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">items_scraped</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="topics-extensions-ref">
+<span id="id3"></span><h2>内置扩展介绍<a class="headerlink" href="#topics-extensions-ref" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id4">
+<h3>通用扩展<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<div class="section" id="module-scrapy.contrib.logstats">
+<span id="log-stats-extension"></span><h4>记录统计扩展(Log Stats extension)<a class="headerlink" href="#module-scrapy.contrib.logstats" title="永久链接至标题">¶</a></h4>
+<dl class="class">
+<dt id="scrapy.contrib.logstats.LogStats">
+<em class="property">class </em><code class="descclassname">scrapy.contrib.logstats.</code><code class="descname">LogStats</code><a class="headerlink" href="#scrapy.contrib.logstats.LogStats" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<p>记录基本的统计信息，比如爬取的页面和条目(items)。</p>
+</div>
+<div class="section" id="module-scrapy.contrib.corestats">
+<span id="core-stats-extension"></span><h4>核心统计扩展(Core Stats extension)<a class="headerlink" href="#module-scrapy.contrib.corestats" title="永久链接至标题">¶</a></h4>
+<dl class="class">
+<dt id="scrapy.contrib.corestats.CoreStats">
+<em class="property">class </em><code class="descclassname">scrapy.contrib.corestats.</code><code class="descname">CoreStats</code><a class="headerlink" href="#scrapy.contrib.corestats.CoreStats" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<p>如果统计收集器(stats collection)启用了，该扩展开启核心统计收集(参考 <a class="reference internal" href="stats.html#topics-stats"><span class="std std-ref">数据收集(Stats Collection)</span></a>)。</p>
+</div>
+<div class="section" id="module-scrapy.webservice">
+<span id="web-service"></span><span id="topics-extensions-ref-webservice"></span><h4>Web service 扩展<a class="headerlink" href="#module-scrapy.webservice" title="永久链接至标题">¶</a></h4>
+<dl class="class">
+<dt id="scrapy.webservice.scrapy.webservice.WebService">
+<em class="property">class </em><code class="descclassname">scrapy.webservice.</code><code class="descname">WebService</code><a class="headerlink" href="#scrapy.webservice.scrapy.webservice.WebService" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<p>参考 <a class="reference internal" href="webservice.html#topics-webservice"><span class="std std-ref">webservice</span></a> 。</p>
+</div>
+<div class="section" id="module-scrapy.telnet">
+<span id="telnet-console"></span><span id="topics-extensions-ref-telnetconsole"></span><h4>Telnet console 扩展<a class="headerlink" href="#module-scrapy.telnet" title="永久链接至标题">¶</a></h4>
+<dl class="class">
+<dt id="scrapy.telnet.scrapy.telnet.TelnetConsole">
+<em class="property">class </em><code class="descclassname">scrapy.telnet.</code><code class="descname">TelnetConsole</code><a class="headerlink" href="#scrapy.telnet.scrapy.telnet.TelnetConsole" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<p>提供一个telnet控制台，用于进入当前执行的Scrapy进程的Python解析器，
+这对代码调试非常有帮助。</p>
+<p>telnet控制台通过 <a class="reference internal" href="settings.html#std:setting-TELNETCONSOLE_ENABLED"><code class="xref std std-setting docutils literal"><span class="pre">TELNETCONSOLE_ENABLED</span></code></a> 配置项开启，
+服务器会监听 <a class="reference internal" href="telnetconsole.html#std:setting-TELNETCONSOLE_PORT"><code class="xref std std-setting docutils literal"><span class="pre">TELNETCONSOLE_PORT</span></code></a> 指定的端口。</p>
+</div>
+<div class="section" id="module-scrapy.contrib.memusage">
+<span id="memory-usage-extension"></span><span id="topics-extensions-ref-memusage"></span><h4>内存使用扩展(Memory usage extension)<a class="headerlink" href="#module-scrapy.contrib.memusage" title="永久链接至标题">¶</a></h4>
+<dl class="class">
+<dt id="scrapy.contrib.memusage.scrapy.contrib.memusage.MemoryUsage">
+<em class="property">class </em><code class="descclassname">scrapy.contrib.memusage.</code><code class="descname">MemoryUsage</code><a class="headerlink" href="#scrapy.contrib.memusage.scrapy.contrib.memusage.MemoryUsage" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">This extension does not work in Windows.</p>
+</div>
+<p>监控Scrapy进程内存使用量，并且：</p>
+<ol class="arabic simple">
+<li>如果使用内存量超过某个指定值，发送提醒邮件</li>
+<li>如果超过某个指定值，关闭spider</li>
+</ol>
+<p>当内存用量达到 <a class="reference internal" href="settings.html#std:setting-MEMUSAGE_WARNING_MB"><code class="xref std std-setting docutils literal"><span class="pre">MEMUSAGE_WARNING_MB</span></code></a> 指定的值，发送提醒邮件。
+当内存用量达到 <a class="reference internal" href="settings.html#std:setting-MEMUSAGE_LIMIT_MB"><code class="xref std std-setting docutils literal"><span class="pre">MEMUSAGE_LIMIT_MB</span></code></a> 指定的值，发送提醒邮件，同时关闭spider，
+Scrapy进程退出。</p>
+<p>该扩展通过 <a class="reference internal" href="settings.html#std:setting-MEMUSAGE_ENABLED"><code class="xref std std-setting docutils literal"><span class="pre">MEMUSAGE_ENABLED</span></code></a> 配置项开启，可以使用以下选项：</p>
+<ul class="simple">
+<li><a class="reference internal" href="settings.html#std:setting-MEMUSAGE_LIMIT_MB"><code class="xref std std-setting docutils literal"><span class="pre">MEMUSAGE_LIMIT_MB</span></code></a></li>
+<li><a class="reference internal" href="settings.html#std:setting-MEMUSAGE_WARNING_MB"><code class="xref std std-setting docutils literal"><span class="pre">MEMUSAGE_WARNING_MB</span></code></a></li>
+<li><a class="reference internal" href="settings.html#std:setting-MEMUSAGE_NOTIFY_MAIL"><code class="xref std std-setting docutils literal"><span class="pre">MEMUSAGE_NOTIFY_MAIL</span></code></a></li>
+<li><a class="reference internal" href="settings.html#std:setting-MEMUSAGE_REPORT"><code class="xref std std-setting docutils literal"><span class="pre">MEMUSAGE_REPORT</span></code></a></li>
+</ul>
+</div>
+<div class="section" id="module-scrapy.contrib.memdebug">
+<span id="memory-debugger-extension"></span><h4>内存调试扩展(Memory debugger extension)<a class="headerlink" href="#module-scrapy.contrib.memdebug" title="永久链接至标题">¶</a></h4>
+<dl class="class">
+<dt id="scrapy.contrib.memdebug.scrapy.contrib.memdebug.MemoryDebugger">
+<em class="property">class </em><code class="descclassname">scrapy.contrib.memdebug.</code><code class="descname">MemoryDebugger</code><a class="headerlink" href="#scrapy.contrib.memdebug.scrapy.contrib.memdebug.MemoryDebugger" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<p>该扩展用于调试内存使用量，它收集以下信息：</p>
+<ul class="simple">
+<li>没有被Python垃圾回收器收集的对象</li>
+<li>应该被销毁却仍然存活的对象。更多信息请参考 <a class="reference internal" href="leaks.html#topics-leaks-trackrefs"><span class="std std-ref">使用 trackref 调试内存泄露</span></a></li>
+</ul>
+<p>开启该扩展，需打开 <a class="reference internal" href="settings.html#std:setting-MEMDEBUG_ENABLED"><code class="xref std std-setting docutils literal"><span class="pre">MEMDEBUG_ENABLED</span></code></a> 配置项。
+信息将会存储在统计信息(stats)中。</p>
+</div>
+<div class="section" id="module-scrapy.contrib.closespider">
+<span id="spider"></span><h4>关闭spider扩展<a class="headerlink" href="#module-scrapy.contrib.closespider" title="永久链接至标题">¶</a></h4>
+<dl class="class">
+<dt id="scrapy.contrib.closespider.scrapy.contrib.closespider.CloseSpider">
+<em class="property">class </em><code class="descclassname">scrapy.contrib.closespider.</code><code class="descname">CloseSpider</code><a class="headerlink" href="#scrapy.contrib.closespider.scrapy.contrib.closespider.CloseSpider" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<p>当某些状况发生，spider会自动关闭。每种情况使用指定的关闭原因。</p>
+<p>关闭spider的情况可以通过下面的设置项配置：</p>
+<ul class="simple">
+<li><a class="reference internal" href="#std:setting-CLOSESPIDER_TIMEOUT"><code class="xref std std-setting docutils literal"><span class="pre">CLOSESPIDER_TIMEOUT</span></code></a></li>
+<li><a class="reference internal" href="#std:setting-CLOSESPIDER_ITEMCOUNT"><code class="xref std std-setting docutils literal"><span class="pre">CLOSESPIDER_ITEMCOUNT</span></code></a></li>
+<li><a class="reference internal" href="#std:setting-CLOSESPIDER_PAGECOUNT"><code class="xref std std-setting docutils literal"><span class="pre">CLOSESPIDER_PAGECOUNT</span></code></a></li>
+<li><a class="reference internal" href="#std:setting-CLOSESPIDER_ERRORCOUNT"><code class="xref std std-setting docutils literal"><span class="pre">CLOSESPIDER_ERRORCOUNT</span></code></a></li>
+</ul>
+<div class="section" id="closespider-timeout">
+<span id="std:setting-CLOSESPIDER_TIMEOUT"></span><h5>CLOSESPIDER_TIMEOUT<a class="headerlink" href="#closespider-timeout" title="永久链接至标题">¶</a></h5>
+<p>默认值: <code class="docutils literal"><span class="pre">0</span></code></p>
+<p>一个整数值，单位为秒。如果一个spider在指定的秒数后仍在运行，
+它将以 <code class="docutils literal"><span class="pre">closespider_timeout</span></code> 的原因被自动关闭。
+如果值设置为0（或者没有设置），spiders不会因为超时而关闭。</p>
+</div>
+<div class="section" id="closespider-itemcount">
+<span id="std:setting-CLOSESPIDER_ITEMCOUNT"></span><h5>CLOSESPIDER_ITEMCOUNT<a class="headerlink" href="#closespider-itemcount" title="永久链接至标题">¶</a></h5>
+<p>缺省值: <code class="docutils literal"><span class="pre">0</span></code></p>
+<p>一个整数值，指定条目的个数。如果spider爬取条目数超过了指定的数，
+并且这些条目通过item pipeline传递，spider将会以 <code class="docutils literal"><span class="pre">closespider_itemcount</span></code> 的原因被自动关闭。</p>
+</div>
+<div class="section" id="closespider-pagecount">
+<span id="std:setting-CLOSESPIDER_PAGECOUNT"></span><h5>CLOSESPIDER_PAGECOUNT<a class="headerlink" href="#closespider-pagecount" title="永久链接至标题">¶</a></h5>
+<div class="versionadded">
+<p><span class="versionmodified">0.11 新版功能.</span></p>
+</div>
+<p>缺省值: <code class="docutils literal"><span class="pre">0</span></code></p>
+<p>一个整数值，指定最大的抓取响应(reponses)数。
+如果spider抓取数超过指定的值，则会以 <code class="docutils literal"><span class="pre">closespider_pagecount</span></code> 的原因自动关闭。
+如果设置为0（或者未设置），spiders不会因为抓取的响应数而关闭。</p>
+</div>
+<div class="section" id="closespider-errorcount">
+<span id="std:setting-CLOSESPIDER_ERRORCOUNT"></span><h5>CLOSESPIDER_ERRORCOUNT<a class="headerlink" href="#closespider-errorcount" title="永久链接至标题">¶</a></h5>
+<div class="versionadded">
+<p><span class="versionmodified">0.11 新版功能.</span></p>
+</div>
+<p>缺省值: <code class="docutils literal"><span class="pre">0</span></code></p>
+<p>一个整数值，指定spider可以接受的最大错误数。
+如果spider生成多于该数目的错误，它将以 <code class="docutils literal"><span class="pre">closespider_errorcount</span></code> 的原因关闭。
+如果设置为0（或者未设置），spiders不会因为发生错误过多而关闭。</p>
+</div>
+</div>
+<div class="section" id="module-scrapy.contrib.statsmailer">
+<span id="statsmailer-extension"></span><h4>StatsMailer extension<a class="headerlink" href="#module-scrapy.contrib.statsmailer" title="永久链接至标题">¶</a></h4>
+<dl class="class">
+<dt id="scrapy.contrib.statsmailer.scrapy.contrib.statsmailer.StatsMailer">
+<em class="property">class </em><code class="descclassname">scrapy.contrib.statsmailer.</code><code class="descname">StatsMailer</code><a class="headerlink" href="#scrapy.contrib.statsmailer.scrapy.contrib.statsmailer.StatsMailer" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<p>这个简单的扩展可用来在一个域名爬取完毕时发送提醒邮件，
+包含Scrapy收集的统计信息。
+邮件会发送个通过 <a class="reference internal" href="settings.html#std:setting-STATSMAILER_RCPTS"><code class="xref std std-setting docutils literal"><span class="pre">STATSMAILER_RCPTS</span></code></a> 指定的所有接收人。</p>
+<span class="target" id="module-scrapy.contrib.debug"></span></div>
+</div>
+<div class="section" id="debugging-extensions">
+<h3>Debugging extensions<a class="headerlink" href="#debugging-extensions" title="永久链接至标题">¶</a></h3>
+<div class="section" id="stack-trace-dump-extension">
+<h4>Stack trace dump extension<a class="headerlink" href="#stack-trace-dump-extension" title="永久链接至标题">¶</a></h4>
+<dl class="class">
+<dt id="scrapy.contrib.debug.scrapy.contrib.debug.StackTraceDump">
+<em class="property">class </em><code class="descclassname">scrapy.contrib.debug.</code><code class="descname">StackTraceDump</code><a class="headerlink" href="#scrapy.contrib.debug.scrapy.contrib.debug.StackTraceDump" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<p>当收到 <cite>SIGQUIT</cite> 或 <cite>SIGUSR2</cite> 信号，spider进程的信息将会被存储下来。
+存储的信息包括：</p>
+<ol class="arabic simple">
+<li>engine状态(使用 <code class="docutils literal"><span class="pre">scrapy.utils.engin.get_engine_status()</span></code>)</li>
+<li>所有存活的引用(live references)(参考 <a class="reference internal" href="leaks.html#topics-leaks-trackrefs"><span class="std std-ref">使用 trackref 调试内存泄露</span></a>)</li>
+<li>所有线程的堆栈信息</li>
+</ol>
+<p>当堆栈信息和engine状态存储后，Scrapy进程继续正常运行。</p>
+<p>该扩展只在POSIX兼容的平台上可运行（比如不能在Windows运行），
+因为 <cite>SIGQUIT</cite> 和 <cite>SIGUSR2</cite> 信号在Windows上不可用。</p>
+<p>至少有两种方式可以向Scrapy发送 <a class="reference external" href="http://en.wikipedia.org/wiki/SIGQUIT">SIGQUIT</a> 信号:</p>
+<ol class="arabic">
+<li><p class="first">在Scrapy进程运行时通过按Ctrl-(仅Linux可行?)</p>
+</li>
+<li><p class="first">运行该命令(<code class="docutils literal"><span class="pre">&lt;pid&gt;</span></code> 是Scrapy运行的进程):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">kill</span> <span class="o">-</span><span class="n">QUIT</span> <span class="o">&lt;</span><span class="n">pid</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="debugger-extension">
+<h4>调试扩展(Debugger extension)<a class="headerlink" href="#debugger-extension" title="永久链接至标题">¶</a></h4>
+<dl class="class">
+<dt id="scrapy.contrib.debug.scrapy.contrib.debug.Debugger">
+<em class="property">class </em><code class="descclassname">scrapy.contrib.debug.</code><code class="descname">Debugger</code><a class="headerlink" href="#scrapy.contrib.debug.scrapy.contrib.debug.Debugger" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<p>当收到 <cite>SIGUSR2</cite> 信号，将会在Scrapy进程中调用 <a class="reference external" href="http://docs.python.org/library/pdb.html">Python debugger</a> 。
+debugger退出后，Scrapy进程继续正常运行。</p>
+<p>更多信息参考 <cite>Debugging in Python</cite> 。</p>
+<p>该扩展只在POSIX兼容平台上工作(比如不能再Windows上运行)。</p>
+</div>
+</div>
+</div>
+</div>

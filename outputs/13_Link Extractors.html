@@ -1,0 +1,139 @@
+<div class="section" id="link-extractors">
+<span id="topics-link-extractors"></span><h1>Link Extractors<a class="headerlink" href="#link-extractors" title="永久链接至标题">¶</a></h1>
+<p>Link Extractors 是那些目的仅仅是从网页(<a class="reference internal" href="request-response.html#scrapy.http.Response" title="scrapy.http.Response"><code class="xref py py-class docutils literal"><span class="pre">scrapy.http.Response</span></code></a> 对象)中抽取最终将会被follow链接的对象｡</p>
+<p>Scrapy默认提供2种可用的 Link Extractor, 但你通过实现一个简单的接口创建自己定制的Link Extractor来满足需求｡</p>
+<p>每个LinkExtractor有唯一的公共方法是 <code class="docutils literal"><span class="pre">extract_links</span></code> ,它接收一个 <a class="reference internal" href="request-response.html#scrapy.http.Response" title="scrapy.http.Response"><code class="xref py py-class docutils literal"><span class="pre">Response</span></code></a> 对象,并返回一个 <code class="xref py py-class docutils literal"><span class="pre">scrapy.link.Link</span></code> 对象｡Link Extractors,要实例化一次并且 <code class="docutils literal"><span class="pre">extract_links</span></code> 方法会根据不同的response调用多次提取链接｡</p>
+<p>Link Extractors在 <a class="reference internal" href="spiders.html#scrapy.contrib.spiders.CrawlSpider" title="scrapy.contrib.spiders.CrawlSpider"><code class="xref py py-class docutils literal"><span class="pre">CrawlSpider</span></code></a> 类(在Scrapy可用)中使用, 通过一套规则,但你也可以用它在你的Spider中,即使你不是从 <a class="reference internal" href="spiders.html#scrapy.contrib.spiders.CrawlSpider" title="scrapy.contrib.spiders.CrawlSpider"><code class="xref py py-class docutils literal"><span class="pre">CrawlSpider</span></code></a> 继承的子类, 因为它的目的很简单: 提取链接｡</p>
+<div class="section" id="module-scrapy.contrib.linkextractors">
+<span id="link-extractor"></span><span id="topics-link-extractors-ref"></span><h2>内置Link Extractor 参考<a class="headerlink" href="#module-scrapy.contrib.linkextractors" title="永久链接至标题">¶</a></h2>
+<p>所有与Scrapy绑定且可用的Link Extractors类在 <a class="reference internal" href="#module-scrapy.contrib.linkextractors" title="scrapy.contrib.linkextractors: Link extractors classes"><code class="xref py py-mod docutils literal"><span class="pre">scrapy.contrib.linkextractors</span></code></a> 模块提供｡
+如果您不知道选择哪个link extractor,使用默认的即可(其实就是LxmlLinkExtractor(参照下面)):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy.contrib.linkextractors</span> <span class="k">import</span> <span class="n">LinkExtractor</span>
+</pre></div>
+</div>
+<div class="section" id="module-scrapy.contrib.linkextractors.lxmlhtml">
+<span id="lxmllinkextractor"></span><h3>LxmlLinkExtractor<a class="headerlink" href="#module-scrapy.contrib.linkextractors.lxmlhtml" title="永久链接至标题">¶</a></h3>
+<dl class="class">
+<dt id="scrapy.contrib.linkextractors.lxmlhtml.LxmlLinkExtractor">
+<em class="property">class </em><code class="descclassname">scrapy.contrib.linkextractors.lxmlhtml.</code><code class="descname">LxmlLinkExtractor</code><span class="sig-paren">(</span><em>allow=()</em>, <em>deny=()</em>, <em>allow_domains=()</em>, <em>deny_domains=()</em>, <em>deny_extensions=None</em>, <em>restrict_xpaths=()</em>, <em>tags=('a'</em>, <em>'area')</em>, <em>attrs=('href'</em>, <em>)</em>, <em>canonicalize=True</em>, <em>unique=True</em>, <em>process_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.contrib.linkextractors.lxmlhtml.LxmlLinkExtractor" title="永久链接至目标">¶</a></dt>
+<dd><p>LxmlLinkExtractor is the recommended link extractor with handy filtering
+options. It is implemented using lxml’s robust HTMLParser.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name">
+<col class="field-body">
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first last simple">
+<li><strong>allow</strong> (<em>a regular expression</em><em> (or </em><em>list of</em><em>)</em><em></em>) – a single regular expression (or list of regular expressions)
+that the (absolute) urls must match in order to be extracted. If not
+given (or empty), it will match all links.</li>
+<li><strong>deny</strong> (<em>a regular expression</em><em> (or </em><em>list of</em><em>)</em><em></em>) – a single regular expression (or list of regular expressions)
+that the (absolute) urls must match in order to be excluded (ie. not
+extracted). It has precedence over the <code class="docutils literal"><span class="pre">allow</span></code> parameter. If not
+given (or empty) it won’t exclude any links.</li>
+<li><strong>allow_domains</strong> (<em>str</em><em> or </em><em>list</em>) – a single value or a list of string containing
+domains which will be considered for extracting the links</li>
+<li><strong>deny_domains</strong> (<em>str</em><em> or </em><em>list</em>) – a single value or a list of strings containing
+domains which won’t be considered for extracting the links</li>
+<li><strong>deny_extensions</strong> (<em>list</em>) – a single value or list of strings containing
+extensions that should be ignored when extracting links.
+If not given, it will default to the
+<code class="docutils literal"><span class="pre">IGNORED_EXTENSIONS</span></code> list defined in the <a class="reference external" href="https://github.com/scrapy/scrapy/blob/master/scrapy/linkextractor.py">scrapy.linkextractor</a>
+module.</li>
+<li><strong>restrict_xpaths</strong> (<em>str</em><em> or </em><em>list</em>) – is a XPath (or list of XPath’s) which defines
+regions inside the response where links should be extracted from.
+If given, only the text selected by those XPath will be scanned for
+links. See examples below.</li>
+<li><strong>tags</strong> (<em>str</em><em> or </em><em>list</em>) – a tag or a list of tags to consider when extracting links.
+Defaults to <code class="docutils literal"><span class="pre">('a',</span> <span class="pre">'area')</span></code>.</li>
+<li><strong>attrs</strong> (<em>list</em>) – an attribute or list of attributes which should be considered when looking
+for links to extract (only for those tags specified in the <code class="docutils literal"><span class="pre">tags</span></code>
+parameter). Defaults to <code class="docutils literal"><span class="pre">('href',)</span></code></li>
+<li><strong>canonicalize</strong> (<em>boolean</em>) – canonicalize each extracted url (using
+scrapy.utils.url.canonicalize_url). Defaults to <code class="docutils literal"><span class="pre">True</span></code>.</li>
+<li><strong>unique</strong> (<em>boolean</em>) – whether duplicate filtering should be applied to extracted
+links.</li>
+<li><strong>process_value</strong> (<em>callable</em>) – see <code class="docutils literal"><span class="pre">process_value</span></code> argument of
+<code class="xref py py-class docutils literal"><span class="pre">BaseSgmlLinkExtractor</span></code> class constructor</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scrapy.contrib.linkextractors.sgml">
+<span id="sgmllinkextractor"></span><h3>SgmlLinkExtractor<a class="headerlink" href="#module-scrapy.contrib.linkextractors.sgml" title="永久链接至标题">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">SGMLParser based link extractors are unmantained and its usage is discouraged.
+It is recommended to migrate to <code class="xref py py-class docutils literal"><span class="pre">LxmlLinkExtractor</span></code> if you are still
+using <a class="reference internal" href="#scrapy.contrib.linkextractors.sgml.SgmlLinkExtractor" title="scrapy.contrib.linkextractors.sgml.SgmlLinkExtractor"><code class="xref py py-class docutils literal"><span class="pre">SgmlLinkExtractor</span></code></a>.</p>
+</div>
+<dl class="class">
+<dt id="scrapy.contrib.linkextractors.sgml.SgmlLinkExtractor">
+<em class="property">class </em><code class="descclassname">scrapy.contrib.linkextractors.sgml.</code><code class="descname">SgmlLinkExtractor</code><span class="sig-paren">(</span><em>allow=()</em>, <em>deny=()</em>, <em>allow_domains=()</em>, <em>deny_domains=()</em>, <em>deny_extensions=None</em>, <em>restrict_xpaths=()</em>, <em>tags=('a'</em>, <em>'area')</em>, <em>attrs=('href')</em>, <em>canonicalize=True</em>, <em>unique=True</em>, <em>process_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.contrib.linkextractors.sgml.SgmlLinkExtractor" title="永久链接至目标">¶</a></dt>
+<dd><p>SgmlLinkExtractor继承于 <a class="reference internal" href="#scrapy.contrib.linkextractors.sgml.BaseSgmlLinkExtractor" title="scrapy.contrib.linkextractors.sgml.BaseSgmlLinkExtractor"><code class="xref py py-class docutils literal"><span class="pre">BaseSgmlLinkExtractor</span></code></a>,其提供了过滤器(filter),以便于提取包括符合正则表达式的链接。
+过滤器通过以下构造函数的参数配置:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name">
+<col class="field-body">
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first last simple">
+<li><strong>allow</strong> (<em>a regular expression</em><em> (or </em><em>list of</em><em>)</em><em></em>) – 必须要匹配这个正则表达式(或正则表达式列表)的URL才会被提取｡如果没有给出(或为空), 它会匹配所有的链接｡</li>
+<li><strong>deny</strong> (<em>a regular expression</em><em> (or </em><em>list of</em><em>)</em><em></em>) – 与这个正则表达式(或正则表达式列表)的(绝对)不匹配的URL必须被排除在外(即不提取)｡它的优先级高于 <code class="docutils literal"><span class="pre">allow</span></code> 的参数｡如果没有给出(或None), 将不排除任何链接｡</li>
+<li><strong>allow_domains</strong> (<em>str</em><em> or </em><em>list</em>) – 单值或者包含字符串域的列表表示会被提取的链接的domains｡</li>
+<li><strong>deny_domains</strong> (<em>str</em><em> or </em><em>list</em>) – 单值或包含域名的字符串,将不考虑提取链接的domains｡</li>
+<li><strong>deny_extensions</strong> (<em>list</em>) – 应提取链接时,可以忽略扩展名的列表｡如果没有给出, 它会默认为 <a class="reference external" href="https://github.com/scrapy/scrapy/blob/master/scrapy/linkextractor.py">scrapy.linkextractor</a> 模块中定义的 <code class="docutils literal"><span class="pre">IGNORED_EXTENSIONS</span></code> 列表｡</li>
+<li><strong>restrict_xpaths</strong> (<em>str</em><em> or </em><em>list</em>) – 一个的XPath (或XPath的列表),它定义了链路应该从提取的响应内的区域｡如果给定的,只有那些XPath的选择的文本将被扫描的链接｡见下面的例子｡</li>
+<li><strong>tags</strong> (<em>str</em><em> or </em><em>list</em>) – 提取链接时要考虑的标记或标记列表｡默认为 <code class="docutils literal"><span class="pre">(</span> <span class="pre">'a'</span> <span class="pre">,</span> <span class="pre">'area')</span></code> ｡</li>
+<li><strong>attrs</strong> (<em>list</em>) – 提取链接时应该寻找的attrbitues列表(仅在 <code class="docutils literal"><span class="pre">tag</span></code> 参数中指定的标签)｡默认为 <code class="docutils literal"><span class="pre">('href')</span></code>｡</li>
+<li><strong>canonicalize</strong> (<em>boolean</em>) – 规范化每次提取的URL(使用scrapy.utils.url.canonicalize_url )｡默认为 <code class="docutils literal"><span class="pre">True</span></code> ｡</li>
+<li><strong>unique</strong> (<em>boolean</em>) – 重复过滤是否应适用于提取的链接｡</li>
+<li><strong>process_value</strong> (<em>callable</em>) – 见:class:<cite>BaseSgmlLinkExtractor</cite> 类的构造函数 <code class="docutils literal"><span class="pre">process_value</span></code> 参数｡</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="basesgmllinkextractor">
+<h3>BaseSgmlLinkExtractor<a class="headerlink" href="#basesgmllinkextractor" title="永久链接至标题">¶</a></h3>
+<dl class="class">
+<dt id="scrapy.contrib.linkextractors.sgml.BaseSgmlLinkExtractor">
+<em class="property">class </em><code class="descclassname">scrapy.contrib.linkextractors.sgml.</code><code class="descname">BaseSgmlLinkExtractor</code><span class="sig-paren">(</span><em>tag="a"</em>, <em>attr="href"</em>, <em>unique=False</em>, <em>process_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.contrib.linkextractors.sgml.BaseSgmlLinkExtractor" title="永久链接至目标">¶</a></dt>
+<dd><p>这个Link Extractor的目的只是充当了Sgml Link Extractor的基类｡你应该使用 <a class="reference internal" href="#scrapy.contrib.linkextractors.sgml.SgmlLinkExtractor" title="scrapy.contrib.linkextractors.sgml.SgmlLinkExtractor"><code class="xref py py-class docutils literal"><span class="pre">SgmlLinkExtractor</span></code></a>｡</p>
+<p>该构造函数的参数是:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name">
+<col class="field-body">
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first last simple">
+<li><strong>tag</strong> (<em>str</em><em> or </em><em>callable</em>) – 是一个字符串(带标签的名称)或接收一个标签名, 如果链接应该从标签中提取返回 <code class="docutils literal"><span class="pre">True</span></code> 的函数或 <code class="docutils literal"><span class="pre">False</span></code> 如果他们不应该｡默认为 <code class="docutils literal"><span class="pre">'a'</span></code> ｡请求(一旦它被下载)作为其第一个参数｡欲了解更多信息, 请参阅 <a class="reference internal" href="request-response.html#topics-request-response-ref-request-callback-arguments"><span class="std std-ref">Passing additional data to callback functions</span></a>｡</li>
+<li><strong>attr</strong> (<em>str</em><em> or </em><em>callable</em>) – 无论是字符串(带有tag属性的名称), 或接收到一个属性名称, 如果链接应该从中提取返回 <code class="docutils literal"><span class="pre">True</span></code> 的函数或 <code class="docutils literal"><span class="pre">False</span></code> 如果他们不应该｡默认设置为 <code class="docutils literal"><span class="pre">href</span></code> ｡</li>
+<li><strong>unique</strong> (<em>boolean</em>) – 是一个布尔值,指定是否重复过滤, 应用于提取链接｡</li>
+<li><strong>process_value</strong> (<em>callable</em>) – <p>它接收来自扫描标签和属性提取每个值, 可以修改该值, 并返回一个新的, 或返回 <code class="docutils literal"><span class="pre">None</span></code> 完全忽略链接的功能｡如果没有给出,  <code class="docutils literal"><span class="pre">process_value</span></code> 默认是 <code class="docutils literal"><span class="pre">lambda</span> <span class="pre">x:</span> <span class="pre">x</span></code>｡</p>
+<p>例如,从这段代码中提取链接:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">"javascript:goToPage('../other/page.html'); return false"</span><span class="p">&gt;</span>Link text<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>你可以使用下面的这个 <code class="docutils literal"><span class="pre">process_value</span></code> 函数:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">process_value</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">"javascript:goToPage\('(.*?)'"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+</div>

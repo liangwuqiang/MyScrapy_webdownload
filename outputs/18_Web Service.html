@@ -1,0 +1,322 @@
+<div class="section" id="web-service">
+<span id="topics-webservice"></span><h1>Web Service<a class="headerlink" href="#web-service" title="永久链接至标题">¶</a></h1>
+<p>Scrapy提供用于监控及控制运行中的爬虫的web服务(service)。
+服务通过 <a class="reference external" href="http://www.jsonrpc.org/">JSON-RPC 2.0</a> 协议提供大部分的资源，不过也有些(只读)资源仅仅输出JSON数据。</p>
+<p>Scrapy为管理Scrapy进程提供了一个可扩展的web服务。
+您可以通过 <a class="reference internal" href="#std:setting-WEBSERVICE_ENABLED"><code class="xref std std-setting docutils literal"><span class="pre">WEBSERVICE_ENABLED</span></code></a> 来启用服务。
+服务将会监听 <a class="reference internal" href="#std:setting-WEBSERVICE_PORT"><code class="xref std std-setting docutils literal"><span class="pre">WEBSERVICE_PORT</span></code></a> 的端口，并将记录写入到
+<a class="reference internal" href="#std:setting-WEBSERVICE_LOGFILE"><code class="xref std std-setting docutils literal"><span class="pre">WEBSERVICE_LOGFILE</span></code></a> 指定的文件中。</p>
+<p>web服务是默认启用的 <a class="reference internal" href="extensions.html#topics-extensions-ref"><span class="std std-ref">内置Scrapy扩展</span></a> ，
+不过如果您运行的环境内存紧张的话，也可以关闭该扩展。</p>
+<div class="section" id="web-service-resources">
+<span id="topics-webservice-resources"></span><h2>Web Service资源(resources)<a class="headerlink" href="#web-service-resources" title="永久链接至标题">¶</a></h2>
+<p>web service提供多种资源，定义在
+<code class="xref std std-setting docutils literal"><span class="pre">WEBSERVICE_RESOURCES</span></code> 设置中。 每个资源提供了不同的功能。参考
+<a class="reference internal" href="#topics-webservice-resources-ref"><span class="std std-ref">可用JSON-RPC对象</span></a> 来查看默认可用的资源。</p>
+<p>虽然您可以使用任何协议来实现您的资源，但有两种资源是和Scrapy绑定的:</p>
+<ul class="simple">
+<li>Simple JSON resources - 只读，输出JSON数据</li>
+<li>JSON-RPC resources - 通过使用 <a class="reference external" href="http://www.jsonrpc.org/">JSON-RPC 2.0</a> 协议支持对一些Scrapy对象的直接访问</li>
+</ul>
+<span class="target" id="module-scrapy.contrib.webservice"></span><div class="section" id="json-rpc">
+<span id="topics-webservice-resources-ref"></span><h3>可用JSON-RPC对象<a class="headerlink" href="#json-rpc" title="永久链接至标题">¶</a></h3>
+<p>Scrapy默认支持以下JSON-RPC资源:</p>
+<div class="section" id="module-scrapy.contrib.webservice.crawler">
+<span id="crawler-json-rpc"></span><span id="topics-webservice-crawler"></span><h4>Crawler JSON-RPC资源<a class="headerlink" href="#module-scrapy.contrib.webservice.crawler" title="永久链接至标题">¶</a></h4>
+<dl class="class">
+<dt id="scrapy.contrib.webservice.crawler.CrawlerResource">
+<em class="property">class </em><code class="descclassname">scrapy.contrib.webservice.crawler.</code><code class="descname">CrawlerResource</code><a class="headerlink" href="#scrapy.contrib.webservice.crawler.CrawlerResource" title="永久链接至目标">¶</a></dt>
+<dd><p>提供对主Crawler对象的访问，来控制Scrapy进程。</p>
+<p>默认访问地址: <a class="reference external" href="http://localhost:6080/crawler">http://localhost:6080/crawler</a></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scrapy.contrib.webservice.stats">
+<span id="stats-collector-json-rpc"></span><h4>状态收集器(Stats Collector)JSON-RPC资源<a class="headerlink" href="#module-scrapy.contrib.webservice.stats" title="永久链接至标题">¶</a></h4>
+<dl class="class">
+<dt id="scrapy.contrib.webservice.stats.StatsResource">
+<em class="property">class </em><code class="descclassname">scrapy.contrib.webservice.stats.</code><code class="descname">StatsResource</code><a class="headerlink" href="#scrapy.contrib.webservice.stats.StatsResource" title="永久链接至目标">¶</a></dt>
+<dd><p>提供对crawler使用的状态收集器(Stats Collector)的访问。</p>
+<p>默认访问地址: <a class="reference external" href="http://localhost:6080/stats">http://localhost:6080/stats</a></p>
+</dd></dl>
+
+</div>
+<div class="section" id="spider-manager-json-rpc">
+<h4>爬虫管理器(Spider Manager)JSON-RPC资源<a class="headerlink" href="#spider-manager-json-rpc" title="永久链接至标题">¶</a></h4>
+<p>您可以通过
+<a class="reference internal" href="#topics-webservice-crawler"><span class="std std-ref">Crawler JSON-RPC资源</span></a> 来访问
+爬虫管理器JSON-RPC资源。地址为:
+<a class="reference external" href="http://localhost:6080/crawler/spiders">http://localhost:6080/crawler/spiders</a></p>
+</div>
+<div class="section" id="extension-manager-json-rpc">
+<h4>扩展管理器(Extension Manager)JSON-RPC资源<a class="headerlink" href="#extension-manager-json-rpc" title="永久链接至标题">¶</a></h4>
+<p>您可以通过
+<a class="reference internal" href="#topics-webservice-crawler"><span class="std std-ref">Crawler JSON-RPC资源</span></a> 来访问
+扩展管理器JSON-RPC资源。地址为:</p>
+</div>
+</div>
+<div class="section" id="json">
+<h3>可用JSON资源<a class="headerlink" href="#json" title="永久链接至标题">¶</a></h3>
+<p>Scrapy默认提供下列JSON资源:</p>
+<div class="section" id="module-scrapy.contrib.webservice.enginestatus">
+<span id="id1"></span><h4>引擎状态JSON资源<a class="headerlink" href="#module-scrapy.contrib.webservice.enginestatus" title="永久链接至标题">¶</a></h4>
+<dl class="class">
+<dt id="scrapy.contrib.webservice.enginestatus.EngineStatusResource">
+<em class="property">class </em><code class="descclassname">scrapy.contrib.webservice.enginestatus.</code><code class="descname">EngineStatusResource</code><a class="headerlink" href="#scrapy.contrib.webservice.enginestatus.EngineStatusResource" title="永久链接至目标">¶</a></dt>
+<dd><p>提供了对引擎状态数据的访问</p>
+<p>默认访问地址: <a class="reference external" href="http://localhost:6080/enginestatus">http://localhost:6080/enginestatus</a></p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+<div class="section" id="web">
+<h2>Web服务设置<a class="headerlink" href="#web" title="永久链接至标题">¶</a></h2>
+<p>您可以通过下列选项来设置web服务:</p>
+<div class="section" id="webservice-enabled">
+<span id="std:setting-WEBSERVICE_ENABLED"></span><h3>WEBSERVICE_ENABLED<a class="headerlink" href="#webservice-enabled" title="永久链接至标题">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">True</span></code></p>
+<p>布尔值。确定web服务是否启用(以及说该扩展是否启用)。</p>
+</div>
+<div class="section" id="webservice-logfile">
+<span id="std:setting-WEBSERVICE_LOGFILE"></span><h3>WEBSERVICE_LOGFILE<a class="headerlink" href="#webservice-logfile" title="永久链接至标题">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">None</span></code></p>
+<p>记录对该web服务的http请求的文件。如果未设置，则记录将写到标准scrapy的log中。</p>
+</div>
+<div class="section" id="webservice-port">
+<span id="std:setting-WEBSERVICE_PORT"></span><h3>WEBSERVICE_PORT<a class="headerlink" href="#webservice-port" title="永久链接至标题">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">[6080,</span> <span class="pre">7030]</span></code></p>
+<p>web服务的端口范围。如果设置为 <code class="docutils literal"><span class="pre">None</span></code> 或 <code class="docutils literal"><span class="pre">0</span></code> ，则使用动态分配的端口。</p>
+</div>
+<div class="section" id="webservice-host">
+<span id="std:setting-WEBSERVICE_HOST"></span><h3>WEBSERVICE_HOST<a class="headerlink" href="#webservice-host" title="永久链接至标题">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">'127.0.0.1'</span></code></p>
+<p>web服务监听的接口(interface)</p>
+</div>
+<div class="section" id="webservice-resources">
+<h3>WEBSERVICE_RESOURCES<a class="headerlink" href="#webservice-resources" title="永久链接至标题">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">{}</span></code></p>
+<p>您的项目所启用的web服务资源的列表(list)。请参考
+<a class="reference internal" href="#topics-webservice-resources"><span class="std std-ref">Web Service资源(resources)</span></a> 。该列表将会添加/覆盖
+<code class="xref std std-setting docutils literal"><span class="pre">WEBSERVICE_RESOURCES_BASE</span></code> 中定义的Scrpay默认启用的资源的值。</p>
+</div>
+<div class="section" id="webservice-resources-base">
+<h3>WEBSERVICE_RESOURCES_BASE<a class="headerlink" href="#webservice-resources-base" title="永久链接至标题">¶</a></h3>
+<p>Default:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">'scrapy.contrib.webservice.crawler.CrawlerResource'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s1">'scrapy.contrib.webservice.enginestatus.EngineStatusResource'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s1">'scrapy.contrib.webservice.stats.StatsResource'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Scrapy默认提供的web服务资源的列表。
+您不应该对您的项目修改这个设置，而是修改 <code class="xref std std-setting docutils literal"><span class="pre">WEBSERVICE_RESOURCES</span></code> 。
+如果您想要关闭某些资源，您可以在
+<code class="xref std std-setting docutils literal"><span class="pre">WEBSERVICE_RESOURCES</span></code> 设置其的值为 <code class="docutils literal"><span class="pre">None</span></code> 。</p>
+</div>
+</div>
+<div class="section" id="web-resource">
+<h2>编写web服务资源(resource)<a class="headerlink" href="#web-resource" title="永久链接至标题">¶</a></h2>
+<p>web服务资源的实现采用了Twisted Web API。
+Twisted web及Twisted web资源的更多详情请参考 <a class="reference external" href="http://jcalderone.livejournal.com/50562.html">Twisted Web guide</a> 。</p>
+<p>编写web服务资源您需要继承 <code class="xref py py-class docutils literal"><span class="pre">JsonResource</span></code> 或 <code class="xref py py-class docutils literal"><span class="pre">JsonRpcResource</span></code>
+并实现 <code class="xref py py-class docutils literal"><span class="pre">renderGET</span></code> 方法。</p>
+<dl class="class">
+<dt id="scrapy.contrib.webservice.enginestatus.scrapy.webservice.JsonResource">
+<em class="property">class </em><code class="descclassname">scrapy.webservice.</code><code class="descname">JsonResource</code><a class="headerlink" href="#scrapy.contrib.webservice.enginestatus.scrapy.webservice.JsonResource" title="永久链接至目标">¶</a></dt>
+<dd><p><a class="reference external" href="http://twistedmatrix.com/documents/10.0.0/api/twisted.web.resource.Resource.html">twisted.web.resource.Resource</a> 的子类，实现了一个JSON web服务资源。参考</p>
+<dl class="attribute">
+<dt id="scrapy.contrib.webservice.enginestatus.scrapy.webservice.JsonResource.ws_name">
+<code class="descname">ws_name</code><a class="headerlink" href="#scrapy.contrib.webservice.enginestatus.scrapy.webservice.JsonResource.ws_name" title="永久链接至目标">¶</a></dt>
+<dd><p>Scrapy web服务的名字，同时也是该资源监听的路径。举个例子，
+假设Scrapy web服务监听 <a class="reference external" href="http://localhost:6080/">http://localhost:6080/</a> ，<code class="docutils literal"><span class="pre">ws_name</span></code> 是
+<code class="docutils literal"><span class="pre">'resource1'</span></code> ，则该资源的URL为:</p>
+<blockquote>
+<div><a class="reference external" href="http://localhost:6080/resource1/">http://localhost:6080/resource1/</a></div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="scrapy.contrib.webservice.enginestatus.scrapy.webservice.JsonRpcResource">
+<em class="property">class </em><code class="descclassname">scrapy.webservice.</code><code class="descname">JsonRpcResource</code><span class="sig-paren">(</span><em>crawler</em>, <em>target=None</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.contrib.webservice.enginestatus.scrapy.webservice.JsonRpcResource" title="永久链接至目标">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal"><span class="pre">JsonResource</span></code> 的子类，实现了JSON-RPC资源。
+JSON-RPC资源为Python(Scrapy)对象做了一层JSON-RPC API封装。
+被封装的资源必须通过
+<a class="reference internal" href="#scrapy.contrib.webservice.enginestatus.scrapy.webservice.JsonRpcResource.get_target" title="scrapy.contrib.webservice.enginestatus.scrapy.webservice.JsonRpcResource.get_target"><code class="xref py py-meth docutils literal"><span class="pre">get_target()</span></code></a> 方法返回。该方法默认返回构造器传入的目标(target)。</p>
+<dl class="method">
+<dt id="scrapy.contrib.webservice.enginestatus.scrapy.webservice.JsonRpcResource.get_target">
+<code class="descname">get_target</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.contrib.webservice.enginestatus.scrapy.webservice.JsonRpcResource.get_target" title="永久链接至目标">¶</a></dt>
+<dd><p>返回JSON-RPC所封装的对象。默认情况下，返回构造器传入的对象。</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="id2">
+<h2>web服务资源例子<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<div class="section" id="statsresource-json-rpc-resource">
+<h3>StatsResource (JSON-RPC resource)<a class="headerlink" href="#statsresource-json-rpc-resource" title="永久链接至标题">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy.webservice</span> <span class="k">import</span> <span class="n">JsonRpcResource</span>
+
+<span class="k">class</span> <span class="nc">StatsResource</span><span class="p">(</span><span class="n">JsonRpcResource</span><span class="p">):</span>
+
+    <span class="n">ws_name</span> <span class="o">=</span> <span class="s1">'stats'</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">crawler</span><span class="p">):</span>
+        <span class="n">JsonRpcResource</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">crawler</span><span class="p">,</span> <span class="n">crawler</span><span class="o">.</span><span class="n">stats</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="enginestatusresource-json-resource">
+<h3>EngineStatusResource (JSON resource)<a class="headerlink" href="#enginestatusresource-json-resource" title="永久链接至标题">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy.webservice</span> <span class="k">import</span> <span class="n">JsonResource</span>
+<span class="kn">from</span> <span class="nn">scrapy.utils.engine</span> <span class="k">import</span> <span class="n">get_engine_status</span>
+
+<span class="k">class</span> <span class="nc">EngineStatusResource</span><span class="p">(</span><span class="n">JsonResource</span><span class="p">):</span>
+
+    <span class="n">ws_name</span> <span class="o">=</span> <span class="s1">'enginestatus'</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">crawler</span><span class="p">,</span> <span class="n">spider_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">JsonResource</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">crawler</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_spider_name</span> <span class="o">=</span> <span class="n">spider_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isLeaf</span> <span class="o">=</span> <span class="n">spider_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">render_GET</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">txrequest</span><span class="p">):</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">get_engine_status</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">crawler</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spider_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">status</span>
+        <span class="k">for</span> <span class="n">sp</span><span class="p">,</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">status</span><span class="p">[</span><span class="s1">'spiders'</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">sp</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spider_name</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">st</span>
+
+    <span class="k">def</span> <span class="nf">getChild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">txrequest</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">EngineStatusResource</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">crawler</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="example-of-web-service-client">
+<h2>Example of web service client<a class="headerlink" href="#example-of-web-service-client" title="永久链接至标题">¶</a></h2>
+<div class="section" id="scrapy-ws-py-script">
+<h3>scrapy-ws.py script<a class="headerlink" href="#scrapy-ws-py-script" title="永久链接至标题">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="sd">"""</span>
+<span class="sd">Example script to control a Scrapy server using its JSON-RPC web service.</span>
+
+<span class="sd">It only provides a reduced functionality as its main purpose is to illustrate</span>
+<span class="sd">how to write a web service client. Feel free to improve or write you own.</span>
+
+<span class="sd">Also, keep in mind that the JSON-RPC API is not stable. The recommended way for</span>
+<span class="sd">controlling a Scrapy server is through the execution queue (see the "queue"</span>
+<span class="sd">command).</span>
+
+<span class="sd">"""</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">optparse</span><span class="o">,</span> <span class="nn">urllib</span><span class="o">,</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">urlparse</span> <span class="k">import</span> <span class="n">urljoin</span>
+
+<span class="kn">from</span> <span class="nn">scrapy.utils.jsonrpc</span> <span class="k">import</span> <span class="n">jsonrpc_client_call</span><span class="p">,</span> <span class="n">JsonRpcError</span>
+
+<span class="k">def</span> <span class="nf">get_commands</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">'help'</span><span class="p">:</span> <span class="n">cmd_help</span><span class="p">,</span>
+        <span class="s1">'stop'</span><span class="p">:</span> <span class="n">cmd_stop</span><span class="p">,</span>
+        <span class="s1">'list-available'</span><span class="p">:</span> <span class="n">cmd_list_available</span><span class="p">,</span>
+        <span class="s1">'list-running'</span><span class="p">:</span> <span class="n">cmd_list_running</span><span class="p">,</span>
+        <span class="s1">'list-resources'</span><span class="p">:</span> <span class="n">cmd_list_resources</span><span class="p">,</span>
+        <span class="s1">'get-global-stats'</span><span class="p">:</span> <span class="n">cmd_get_global_stats</span><span class="p">,</span>
+        <span class="s1">'get-spider-stats'</span><span class="p">:</span> <span class="n">cmd_get_spider_stats</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<span class="k">def</span> <span class="nf">cmd_help</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">opts</span><span class="p">):</span>
+    <span class="sd">"""help - list available commands"""</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Available commands:"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">get_commands</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"  "</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">cmd_stop</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">opts</span><span class="p">):</span>
+    <span class="sd">"""stop &lt;spider&gt; - stop a running spider"""</span>
+    <span class="n">jsonrpc_call</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="s1">'crawler/engine'</span><span class="p">,</span> <span class="s1">'close_spider'</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="k">def</span> <span class="nf">cmd_list_running</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">opts</span><span class="p">):</span>
+    <span class="sd">"""list-running - list running spiders"""</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">json_get</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="s1">'crawler/engine/open_spiders'</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">cmd_list_available</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">opts</span><span class="p">):</span>
+    <span class="sd">"""list-available - list name of available spiders"""</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">jsonrpc_call</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="s1">'crawler/spiders'</span><span class="p">,</span> <span class="s1">'list'</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">cmd_list_resources</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">opts</span><span class="p">):</span>
+    <span class="sd">"""list-resources - list available web service resources"""</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">json_get</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="s1">''</span><span class="p">)[</span><span class="s1">'resources'</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">cmd_get_spider_stats</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">opts</span><span class="p">):</span>
+    <span class="sd">"""get-spider-stats &lt;spider&gt; - get stats of a running spider"""</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="n">jsonrpc_call</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="s1">'stats'</span><span class="p">,</span> <span class="s1">'get_stats'</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">stats</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="si">%-40s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">cmd_get_global_stats</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">opts</span><span class="p">):</span>
+    <span class="sd">"""get-global-stats - get global stats"""</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="n">jsonrpc_call</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="s1">'stats'</span><span class="p">,</span> <span class="s1">'get_stats'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">stats</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="si">%-40s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">get_wsurl</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">urljoin</span><span class="p">(</span><span class="s2">"http://</span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2">/"</span><span class="o">%</span> <span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">port</span><span class="p">),</span> <span class="n">path</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">jsonrpc_call</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">get_wsurl</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jsonrpc_client_call</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">json_get</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">get_wsurl</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+<span class="k">def</span> <span class="nf">parse_opts</span><span class="p">():</span>
+    <span class="n">usage</span> <span class="o">=</span> <span class="s2">"%prog [options] &lt;command&gt; [arg] ..."</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="s2">"Scrapy web service control script. Use '%prog help' "</span> \
+        <span class="s2">"to see the list of available commands."</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">optparse</span><span class="o">.</span><span class="n">OptionParser</span><span class="p">(</span><span class="n">usage</span><span class="o">=</span><span class="n">usage</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">)</span>
+    <span class="n">op</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s2">"-H"</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">"host"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span> \
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Scrapy host to connect to"</span><span class="p">)</span>
+    <span class="n">op</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s2">"-P"</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">"port"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">"int"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">6080</span><span class="p">,</span> \
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Scrapy port to connect to"</span><span class="p">)</span>
+    <span class="n">opts</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="p">:</span>
+        <span class="n">op</span><span class="o">.</span><span class="n">print_help</span><span class="p">()</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">cmdname</span><span class="p">,</span> <span class="n">cmdargs</span><span class="p">,</span> <span class="n">opts</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">opts</span>
+    <span class="n">commands</span> <span class="o">=</span> <span class="n">get_commands</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">cmdname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"Unknown command: </span><span class="si">%s</span><span class="se">\n\n</span><span class="s2">"</span> <span class="o">%</span> <span class="n">cmdname</span><span class="p">)</span>
+        <span class="n">cmd_help</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">commands</span><span class="p">[</span><span class="n">cmdname</span><span class="p">],</span> <span class="n">cmdargs</span><span class="p">,</span> <span class="n">opts</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">cmd</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">opts</span> <span class="o">=</span> <span class="n">parse_opts</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cmd</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">opts</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">JsonRpcError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"Server Traceback below:"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>

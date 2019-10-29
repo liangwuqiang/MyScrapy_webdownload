@@ -1,0 +1,29 @@
+<div class="section" id="experimental">
+<span id="id1"></span><h1>试验阶段特性<a class="headerlink" href="#experimental" title="永久链接至标题">¶</a></h1>
+<p>这部分介绍一些正处于试验阶段的Scrapy特性，
+这些特性所涉及到的函数接口等还不够稳定，
+但会在以后的发布版中趋于完善。所以在使用这些特性过程中需更谨慎，
+并且最好订阅我们的 <a class="reference external" href="http://scrapy.org/community/">邮件列表</a> 以便接收任何有关特性改变的通知。</p>
+<p>虽然这些特性不会频繁的被修改，但是这部分文档仍有可能是过时的、
+不完整的或是与已经稳定的特性文档重复。所以你需要自行承担使用风险。</p>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">本部分文档一直处于修改中。请自行承担使用风险。</p>
+</div>
+<div class="section" id="id3">
+<h2>使用外部库插入命令<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>你可以使用外部库通过增加 <cite>scrapy.commands</cite> 部分到 <cite>setup.py</cite> 的entry_points中来插入Scrapy命令。</p>
+<p>增加 <cite>my_command</cite> 命令的例子:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">setuptools</span> <span class="k">import</span> <span class="n">setup</span><span class="p">,</span> <span class="n">find_packages</span>
+
+<span class="n">setup</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'scrapy-mymodule'</span><span class="p">,</span>
+  <span class="n">entry_points</span><span class="o">=</span><span class="p">{</span>
+    <span class="s1">'scrapy.commands'</span><span class="p">:</span> <span class="p">[</span>
+      <span class="s1">'my_command=my_scrapy_module.commands:MyCommand'</span><span class="p">,</span>
+    <span class="p">],</span>
+  <span class="p">},</span>
+ <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>

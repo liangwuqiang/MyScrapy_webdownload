@@ -1,1 +1,0 @@
-F._setMod("mancard");F._fileMap({"/js/mancard_7066c60c.js":["skeleton/card","skeleton/model","skeleton/card_collection","skeleton/card_showLog","skeleton/card_alsLog","skeleton/presenter","skeleton/card_tab","setting/card_setting","subscribe/parabola","subscribe/subscribe"],"/css/card_min_610cf689.css":["card_setting.css","card_menu.css"]});F._useConfig=true;

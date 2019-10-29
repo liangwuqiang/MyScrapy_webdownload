@@ -1,0 +1,138 @@
+<div class="section" id="item-pipeline">
+<span id="topics-item-pipeline"></span><h1>Item Pipeline<a class="headerlink" href="#item-pipeline" title="永久链接至标题">¶</a></h1>
+<p>当Item在Spider中被收集之后，它将会被传递到Item Pipeline，一些组件会按照一定的顺序执行对Item的处理。</p>
+<p>每个item pipeline组件(有时称之为“Item Pipeline”)是实现了简单方法的Python类。他们接收到Item并通过它执行一些行为，同时也决定此Item是否继续通过pipeline，或是被丢弃而不再进行处理。</p>
+<p>以下是item pipeline的一些典型应用：</p>
+<ul class="simple">
+<li>清理HTML数据</li>
+<li>验证爬取的数据(检查item包含某些字段)</li>
+<li>查重(并丢弃)</li>
+<li>将爬取结果保存到数据库中</li>
+</ul>
+<div class="section" id="id1">
+<h2>编写你自己的item pipeline<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>编写你自己的item pipeline很简单，每个item pipiline组件是一个独立的Python类，同时必须实现以下方法:</p>
+<dl class="method">
+<dt id="process_item">
+<code class="descname">process_item</code><span class="sig-paren">(</span><em>item</em>, <em>spider</em><span class="sig-paren">)</span><a class="headerlink" href="#process_item" title="永久链接至目标">¶</a></dt>
+<dd><p>每个item pipeline组件都需要调用该方法，这个方法必须返回一个 <a class="reference internal" href="items.html#scrapy.item.Item" title="scrapy.item.Item"><code class="xref py py-class docutils literal"><span class="pre">Item</span></code></a> (或任何继承类)对象，
+或是抛出 <a class="reference internal" href="exceptions.html#scrapy.exceptions.DropItem" title="scrapy.exceptions.DropItem"><code class="xref py py-exc docutils literal"><span class="pre">DropItem</span></code></a> 异常，被丢弃的item将不会被之后的pipeline组件所处理。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name">
+<col class="field-body">
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first last simple">
+<li><strong>item</strong> (<a class="reference internal" href="items.html#scrapy.item.Item" title="scrapy.item.Item"><code class="xref py py-class docutils literal"><span class="pre">Item</span></code></a> 对象) – 被爬取的item</li>
+<li><strong>spider</strong> (<a class="reference internal" href="spiders.html#scrapy.spider.Spider" title="scrapy.spider.Spider"><code class="xref py py-class docutils literal"><span class="pre">Spider</span></code></a> 对象) – 爬取该item的spider</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>此外,他们也可以实现以下方法:</p>
+<dl class="method">
+<dt id="open_spider">
+<code class="descname">open_spider</code><span class="sig-paren">(</span><em>spider</em><span class="sig-paren">)</span><a class="headerlink" href="#open_spider" title="永久链接至目标">¶</a></dt>
+<dd><p>当spider被开启时，这个方法被调用。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name">
+<col class="field-body">
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><strong>spider</strong> (<a class="reference internal" href="spiders.html#scrapy.spider.Spider" title="scrapy.spider.Spider"><code class="xref py py-class docutils literal"><span class="pre">Spider</span></code></a> 对象) – 被开启的spider</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="close_spider">
+<code class="descname">close_spider</code><span class="sig-paren">(</span><em>spider</em><span class="sig-paren">)</span><a class="headerlink" href="#close_spider" title="永久链接至目标">¶</a></dt>
+<dd><p>当spider被关闭时，这个方法被调用</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name">
+<col class="field-body">
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><strong>spider</strong> (<a class="reference internal" href="spiders.html#scrapy.spider.Spider" title="scrapy.spider.Spider"><code class="xref py py-class docutils literal"><span class="pre">Spider</span></code></a> 对象) – 被关闭的spider</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="id2">
+<h2>Item pipeline 样例<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<div class="section" id="item">
+<h3>验证价格，同时丢弃没有价格的item<a class="headerlink" href="#item" title="永久链接至标题">¶</a></h3>
+<p>让我们来看一下以下这个假设的pipeline，它为那些不含税(<code class="docutils literal"><span class="pre">price_excludes_vat</span></code> 属性)的item调整了 <code class="docutils literal"><span class="pre">price</span></code> 属性，同时丢弃了那些没有价格的item:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy.exceptions</span> <span class="k">import</span> <span class="n">DropItem</span>
+
+<span class="k">class</span> <span class="nc">PricePipeline</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="n">vat_factor</span> <span class="o">=</span> <span class="mf">1.15</span>
+
+    <span class="k">def</span> <span class="nf">process_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">spider</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s1">'price'</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s1">'price_excludes_vat'</span><span class="p">]:</span>
+                <span class="n">item</span><span class="p">[</span><span class="s1">'price'</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s1">'price'</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">vat_factor</span>
+            <span class="k">return</span> <span class="n">item</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DropItem</span><span class="p">(</span><span class="s2">"Missing price in </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">item</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="itemjson">
+<h3>将item写入JSON文件<a class="headerlink" href="#itemjson" title="永久链接至标题">¶</a></h3>
+<p>以下pipeline将所有(从所有spider中)爬取到的item，存储到一个独立地 <code class="docutils literal"><span class="pre">items.jl</span></code> 文件，每行包含一个序列化为JSON格式的item:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+
+<span class="k">class</span> <span class="nc">JsonWriterPipeline</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'items.jl'</span><span class="p">,</span> <span class="s1">'wb'</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">process_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">spider</span><span class="p">):</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">item</span><span class="p">))</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">item</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">JsonWriterPipeline的目的只是为了介绍怎样编写item pipeline，如果你想要将所有爬取的item都保存到同一个JSON文件，
+你需要使用 <a class="reference internal" href="feed-exports.html#topics-feed-exports"><span class="std std-ref">Feed exports</span></a> 。</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>去重<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>一个用于去重的过滤器，丢弃那些已经被处理过的item。让我们假设我们的item有一个唯一的id，但是我们spider返回的多个item中包含有相同的id:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy.exceptions</span> <span class="k">import</span> <span class="n">DropItem</span>
+
+<span class="k">class</span> <span class="nc">DuplicatesPipeline</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ids_seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">process_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">spider</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ids_seen</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DropItem</span><span class="p">(</span><span class="s2">"Duplicate item found: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">item</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ids_seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s1">'id'</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">item</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>启用一个Item Pipeline组件<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>为了启用一个Item Pipeline组件，你必须将它的类添加到 <a class="reference internal" href="settings.html#std:setting-ITEM_PIPELINES"><code class="xref std std-setting docutils literal"><span class="pre">ITEM_PIPELINES</span></code></a> 配置，就像下面这个例子:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ITEM_PIPELINES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'myproject.pipelines.PricePipeline'</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>
+    <span class="s1">'myproject.pipelines.JsonWriterPipeline'</span><span class="p">:</span> <span class="mi">800</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>分配给每个类的整型值，确定了他们运行的顺序，item按数字从低到高的顺序，通过pipeline，通常将这些数字定义在0-1000范围内。</p>
+</div>
+</div>

@@ -1,0 +1,34 @@
+<div class="section" id="ubuntu">
+<span id="topics-ubuntu"></span><h1>Ubuntu 软件包<a class="headerlink" href="#ubuntu" title="永久链接至标题">¶</a></h1>
+<div class="versionadded">
+<p><span class="versionmodified">0.10 新版功能.</span></p>
+</div>
+<p><a class="reference external" href="http://scrapinghub.com/">Scrapinghub</a> 发布的apt-get可获取版本通常比Ubuntu里更新，并且在比 <a class="reference external" href="https://github.com/scrapy/scrapy">Github 仓库</a>
+(master &amp; stable branches) 稳定的同时还包括了最新的漏洞修复。</p>
+<p>用法:</p>
+<ol class="arabic">
+<li><p class="first">把Scrapy签名的GPG密钥添加到APT的钥匙环中:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">key</span> <span class="n">adv</span> <span class="o">--</span><span class="n">keyserver</span> <span class="n">hkp</span><span class="p">:</span><span class="o">//</span><span class="n">keyserver</span><span class="o">.</span><span class="n">ubuntu</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="mi">80</span> <span class="o">--</span><span class="n">recv</span> <span class="mf">627220E7</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">执行如下命令，创建 <cite>/etc/apt/sources.list.d/scrapy.list</cite> 文件:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">echo</span> <span class="s1">'deb http://archive.scrapy.org/ubuntu scrapy main'</span> <span class="o">|</span> <span class="n">sudo</span> <span class="n">tee</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">apt</span><span class="o">/</span><span class="n">sources</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">scrapy</span><span class="o">.</span><span class="n">list</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">更新包列表并安装 scrapy-0.24:</p>
+<pre class="literal-block">
+sudo apt-get update &amp;&amp; sudo apt-get install scrapy-0.24
+</pre>
+</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">如果你要升级Scrapy，请重复步骤3。</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">debian官方源提供的 <cite>python-scrapy</cite> 是一个非常老的版本且不再获得Scrapy团队支持。</p>
+</div>
+</div>

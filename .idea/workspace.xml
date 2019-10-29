@@ -1,7 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="23367ea5-4ba8-413d-83e6-422ae4ba2914" name="Default Changelist" comment="" />
+    <list default="true" id="23367ea5-4ba8-413d-83e6-422ae4ba2914" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/myscrapy/spiders/scrapy_chs.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/10_Scrapy终端Scrapy shell.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/11_Item Pipeline.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/12_Feed exports.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/13_Link Extractors.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/14_Logging.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/15_数据收集Stats Collection.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/16_发送email.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/17_Telnet终端Telnet Console.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/18_Web Service.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/19_常见问题FAQ.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/1_初窥Scrapy.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/20_调试DebuggingSpiders.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/21_Spiders Contracts.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/22_实践经验Common Practices.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/23_通用爬虫Broad Crawls.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/24_借助Firefox来爬取.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/25_使用Firebug进行爬取.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/26_调试内存溢出.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/27_下载项目图片.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/28_Ubuntu 软件包.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/29_Scrapyd.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/2_安装指南.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/30_自动限速AutoThrottle扩展.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/31_Benchmarking.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/32_Jobs 暂停，恢复爬虫.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/33_DjangoItem.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/34_架构概览.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/35_下载器中间件Downloader Middleware.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/36_Spider中间件Middleware.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/37_扩展Extensions.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/38_核心API.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/39_Requests and Responses.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/3_Scrapy入门教程.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/40_Settings.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/41_信号Signals.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/42_异常Exceptions.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/43_Item Exporters.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/44_Release notes.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/45_Contributing to Scrapy.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/46_Versioning and API Stability.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/47_试验阶段特性.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/4_例子.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/5_命令行工具Command line tools.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/6_Items.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/7_Spiders.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/8_选择器Selectors.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/9_Item Loaders.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/images/fdae87e58ef5fcfa027b4076fbc403d6ef1e0e3a.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/其它/translate用法实例.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/样本截图.PNG" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/items.py" beforeDir="false" afterPath="$PROJECT_DIR$/myscrapy/items.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/pipelines.py" beforeDir="false" afterPath="$PROJECT_DIR$/myscrapy/pipelines.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/myscrapy/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/8326cffc1e178a82a83ab999ac18d788a977e8a2.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/9a504fc2d56285351083b4fb0bd7d2c3a6ef6343.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/activity_start_52498d2c.js.下载" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/all_async_search_54a46ba.js.下载" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/b7fd5266d0160924c6c349253b4d91ffe7cd34fe.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/baidu_resultlogo@2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/bd_logo1(1).png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/bd_logo1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/card_min_610cf689.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/config_bf18b8aa.js.下载" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/copy_rignt_24.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/d043ad4bd11373f0bab6b2418e33effefaed0420.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/default_b91837ae.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/e4dde71190ef76c6da73f1deb62a59ffae516767.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/index_56b021c8.js.下载" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/init_23d95fab.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/jquery-1.10.2_1c4228b8.js.下载" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/loading_72b1da62.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/logo_top_86d58ae1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/mancard_4389889c.js.下载" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/min_super_fdb28b91.js.下载" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/min_tips_e4616384.js.下载" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/mt_min_2247e202.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/newmusic_min_1b1ebf56.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/newmusic_min_c7fb6ae7.js.下载" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/nsguide_a8cbc2e7.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/sbase_a65ca873.js.下载" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/search-sug_0a72570.js.下载" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/soutu.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/super_ext_5031d813.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/super_min_0d867764.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/swfobject_0178953.js.下载" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/tu_77547af.js.下载" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/u=898207468,1667334241&amp;fm=173&amp;app=25&amp;f=JPEG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myscrapy/spiders/test/百度_files/ubase_9376fdcf.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrapy.log" beforeDir="false" afterPath="$PROJECT_DIR$/scrapy.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/创建项目.txt" beforeDir="false" afterPath="$PROJECT_DIR$/其它/创建项目.txt" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,8 +112,15 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectId" id="1SfokkhlehYZGlnfbUJpdkry1mk" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RunDashboard">
@@ -31,7 +135,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.run">
     <configuration name="run" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="myscrapy" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -53,9 +157,53 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="test (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="myscrapy" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/myscrapy/spiders" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/myscrapy/spiders/test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="myscrapy" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/myscrapy/spiders/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="C:\Users\Administrator\PycharmProjects\myscrapy\myscrapy\spiders\test\translate用法实例.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Python.run" />
+        <item itemvalue="Python.test (1)" />
+        <item itemvalue="Python.test" />
       </list>
     </recent_temporary>
   </component>
@@ -71,5 +219,18 @@
       <updated>1571964155696</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

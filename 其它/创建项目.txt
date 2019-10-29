@@ -1,0 +1,4 @@
+scrapy startproject myscrapy
+cd myscrapy
+scrapy genspider example example.com
+scrapy genspider test test.com
