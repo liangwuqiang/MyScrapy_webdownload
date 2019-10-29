@@ -1,0 +1,4 @@
+1. 将本地的仓库关联到github上
+    git remote add origin https://自己的仓库url地址
+2. 把代码上传到github仓库
+    git push -u origin master
